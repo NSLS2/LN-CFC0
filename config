@@ -1,6 +1,6 @@
 NAME=LN-CFC0
 
-PORT=4056
+PORT=4052
 
 USER=softioc
 
