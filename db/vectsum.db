@@ -1,0 +1,80 @@
+#record(ai,       "$(S1){$(D1)-$(SD1)}E:1") {
+#  field(PINI,    "YES")
+#  field(VAL,     "1")
+#  field(FLNK,    "$(S1){$(D1)-$(SD1)}E:ASum-Calc")
+#}
+#
+#record(ai,       "$(S1){$(D1)-$(SD1)}E:2") {
+#  field(PINI,    "YES")
+#  field(VAL,     "2")
+#  field(FLNK,    "$(S1){$(D1)-$(SD1)}E:ASum-Calc")
+#}
+#
+#record(ai,       "$(S1){$(D1)-$(SD1)}Phs:1") {
+#  field(PINI,    "YES")
+#  field(VAL,     "45")
+#  field(FLNK,    "$(S1){$(D1)-$(SD1)}E:ASum-Calc")
+#}
+#
+#record(ai,       "$(S1){$(D1)-$(SD1)}Phs:2") {
+#  field(PINI,    "YES")
+#  field(VAL,     "90")
+#  field(FLNK,    "$(S1){$(D1)-$(SD1)}E:ASum-Calc")
+#}
+
+record(acalcout, "$(S1){$(D1)-$(SD1)}E:ASum-Calc") {
+  field(DESC,    "Vectorsum A:")
+  field(CALC,    "SQRT((A*COS(D2R*B)+C*COS(D2R*(D-E)))^2+(A*SIN(D2R*B)+C*SIN(D2R*(D-E)))^2)")
+#
+#  field(INPA,    "$(S1){$(D1)-$(SD1)}E:1")
+#  field(INPB,    "$(S1){$(D1)-$(SD1)}Phs:1")
+#  field(INPC,    "$(S1){$(D1)-$(SD1)}E:2")
+#  field(INPD,    "$(S1){$(D1)-$(SD1)}Phs:2")
+# 
+  field(INPA,    "$(S1){$(D1)-$(SD1)}E:Avg-I CPP")
+  field(INPB,    "$(S1){$(D1)-$(SD1)}Phs:N1Avg-I CPP")
+  field(INPC,    "$(S1){$(D2)-$(SD1)}E:Avg-I CA")
+  field(INPD,    "$(S1){$(D2)-$(SD1)}Phs:N1Avg-I CA")
+# INPE is phase offset between 2 cavities
+#  field(INPE,    "-11")
+# JAN 17, 2017
+  field(INPE,    "-321")
+  field(NELM,    "1")
+  field(NUSE,    "1")
+  field(OUT,     "$(S1){$(D1)-$(SD1)}E:ASum-I PP")
+}
+
+record(ai,       "$(S1){$(D1)-$(SD1)}E:ASum-I") {
+  field(DESC,    "Vector sum A:")
+  field(PREC,    "1")
+  field(EGU,     "kV")
+  field(FLNK,    "$(S1){$(D1)-$(SD1)}Phs:Sum-Calc")
+}
+
+record(acalcout, "$(S1){$(D1)-$(SD1)}Phs:Sum-Calc") {
+  field(DESC,    "Vectorsum Phs:")
+  field(CALC,    "R2D*ATAN2(A*COS(D2R*B)+C*COS(D2R*(D-E)), A*SIN(D2R*B)+C*SIN(D2R*(D-E)))")
+#
+#  field(INPA,    "$(S1){$(D1)-$(SD1)}E:1")
+#  field(INPB,    "$(S1){$(D1)-$(SD1)}Phs:1")
+#  field(INPC,    "$(S1){$(D1)-$(SD1)}E:2")
+#  field(INPD,    "$(S1){$(D1)-$(SD1)}Phs:2")
+#
+  field(INPA,    "$(S1){$(D1)-$(SD1)}E:Avg-I CPP")
+  field(INPB,    "$(S1){$(D1)-$(SD1)}Phs:N1Avg-I CPP")
+  field(INPC,    "$(S1){$(D2)-$(SD1)}E:Avg-I CA")
+  field(INPD,    "$(S1){$(D2)-$(SD1)}Phs:N1Avg-I CA")
+# INPE is phase offset between 2 cavities
+#  field(INPE,    "-11")
+# JAN 17, 2017
+  field(INPE,    "-321")
+  field(NELM,    "1")
+  field(NUSE,    "1")
+  field(OUT,     "$(S1){$(D1)-$(SD1)}Phs:Sum-I PP")
+}
+
+record(ai,       "$(S1){$(D1)-$(SD1)}Phs:Sum-I") {
+  field(DESC,    "Vector sum Phs:")
+  field(PREC,    "1")
+  field(EGU,     "deg")
+}

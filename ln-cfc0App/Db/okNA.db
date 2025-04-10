@@ -1,0 +1,35 @@
+record(waveform, "$(S1){$(D1)-$(D9)}Val:R-Wf") {
+  field(SCAN,    ".1 second")
+  field(DTYP,    "asynInt16ArrayIn")
+  field(INP ,    "@asyn($(PORT),0)NA I")
+  field(FTVL,    "SHORT")
+  field(NELM,    "128")
+  field(FLNK,    "$(S1){$(D1)-$(D9)}Val:Wf-Calc")
+}
+
+record(acalcout, "$(S1){$(D1)-$(D9)}Val:Wf-Calc") {
+  field(CALC,    "AA")
+  field(NELM,    "128")
+  field(NUSE,    "128")
+  field(INAA,    "$(S1){$(D1)-$(D9)}Val:R-Wf")
+  field(OUT,     "$(S1){$(D1)-$(D9)}Val:Wf PP")
+}
+
+record(waveform, "$(S1){$(D1)-$(D9)}Val:Wf") {
+  field(FTVL,    "DOUBLE")
+  field(NELM,    "128")
+}
+
+record(acalcout, "$(S1){$(D1)-$(D9)}Val:X-Calc") {
+  field(CALC,    "IX")
+  field(NELM,    "128")
+  field(NUSE,    "128")
+  field(PINI,    "YES")
+  field(OUT,     "$(S1){$(D1)-$(D9)}Val:X-Wf PP")
+}
+
+record(waveform, "$(S1){$(D1)-$(D9)}Val:X-Wf") {
+  field(FTVL,    "ULONG")
+  field(NELM,    "128")
+}
+

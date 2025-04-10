@@ -1,0 +1,5 @@
+variable(okSNoASubDebug)
+function(okSNoRdInit)
+function(okSNoWrInit)
+function(okSNoRdProcess)
+function(okSNoWrProcess)

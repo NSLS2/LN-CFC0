@@ -1,0 +1,530 @@
+record(waveform, "$(S1){$(D1)-$(D2)}E:SFunc") {
+ field(FTVL,     "CHAR")
+ field(NELM,     "128")
+ field(DTYP,     "fileread")
+ field(INP,      "@SFuncExprAmp.TXT")
+ field(PINI,     "YES")
+ info(autosaveFields_pass1, "VAL")
+}
+
+record(waveform, "$(S1){$(D1)-$(D2)}Phs:SFunc") {
+ field(FTVL,     "CHAR")
+ field(NELM,     "128")
+ field(DTYP,     "fileread")
+ field(INP,      "@SFuncExprPha.TXT")
+ field(PINI,     "YES")
+ info(autosaveFields_pass1, "VAL")
+}
+
+record(bo,	"$(S1){$(D1)-$(D2)}Sts:Bsy-Sts") {
+  field(ZNAM,   "Idle")
+  field(ONAM,   "Busy")
+  field(PINI,   "YES")
+  field(FLNK,   "$(S1){$(D1)-$(D2)}Sts:Bsy-Calc")
+}
+
+record(calcout, "$(S1){$(D1)-$(D2)}Sts:Bsy-Calc") {
+  field(CALC,   "A")
+  field(INPA,   "$(S1){$(D1)-$(D2)}Sts:Bsy-Sts")
+  field(OUT,    "$(S1){$(D1)-$(D2)}Sts:Bsy-Sts.DISA PP")
+  field(OOPT,   "Transition To Non-zero")
+  field(FLNK,   "$(S1){$(D1)-$(D2)}Sts:Exe-Calc")
+}
+
+record(calcout,  "$(S1){$(D1)-$(D2)}Sts:Exe-Calc") {
+  field(CALC,    "A")
+  field(INPA,    "$(S1){$(D1)-$(D2)}Sts:Bsy-Sts")
+  field(OUT,     "$(S1){$(D1)-$(D2)}Val:I-SP.PROC PP")
+  field(OOPT,    "Transition To Non-zero")
+}
+
+record(ao,       "$(S1){$(D1)-$(D2)}E:Stp-SP") {
+  field(DESC,    "Amp step size:")
+  field(VAL,     "0.0005")
+  field(PINI,    "YES")
+  field(DRVH,    "+0.1")
+  field(HOPR,    "+0.1")
+  field(DRVL,    "-0.1")
+  field(LOPR,    "-0.1")
+  field(PREC,    "6")
+  field(EGU,     "%/100")
+}
+
+record(ao,       "$(S1){$(D1)-$(D2)}Phs:Stp-SP") {
+  field(DESC,    "Phase step size:")
+  field(VAL,     "0")
+  field(PINI,    "YES")
+  field(DRVH,    "180.0")
+  field(HOPR,    "180.0")
+  field(DRVL,    "-180.0")
+  field(LOPR,    "-180.0")
+  field(PREC,    "1")
+  field(EGU,     "deg")
+}
+
+record(subArray, "$(S1){$(D1)-$(D2)}Val:I-SP") {
+  field(DESC,    "Last val in booster FB table")
+  field(FTVL,    "DOUBLE")
+  field(MALM,    "1024")
+  field(NELM,    "1")
+  field(INDX,    "1022")
+  field(INP,     "$(S1){$(D1)-$(TBL2)}Val:IQ-Buf")
+  field(FLNK,    "$(S1){$(D1)-$(D2)}Val:Q-SP")
+}
+
+record(subArray, "$(S1){$(D1)-$(D2)}Val:Q-SP") {
+  field(DESC,    "Last val in booster FB table")
+  field(FTVL,    "DOUBLE")
+  field(MALM,    "1024")
+  field(NELM,    "1")
+  field(INDX,    "1023")
+  field(INP,     "$(S1){$(D1)-$(TBL2)}Val:IQ-Buf")
+  field(FLNK,    "$(S1){$(D1)-$(D2)}Val:AP-Calc")
+}
+
+record(aSub,     "$(S1){$(D1)-$(D2)}Val:AP-Calc") {
+  field(SNAM,    "IQ2AP")
+  field(FTA ,    "DOUBLE")
+  field(FTB ,    "DOUBLE")
+  field(FTVA ,   "DOUBLE")
+  field(FTVB ,   "DOUBLE")
+  field(NOA ,    "1")
+  field(NOB ,    "1")
+  field(NOVA,    "1")
+  field(NOVB,    "1")
+  field(INPA,    "$(S1){$(D1)-$(D2)}Val:I-SP")
+  field(INPB,    "$(S1){$(D1)-$(D2)}Val:Q-SP")
+  field(OUTA,    "$(S1){$(D1)-$(D2)}E:PVal-SP")
+  field(OUTB,    "$(S1){$(D1)-$(D2)}Phs:PVal-SP")
+  field(FLNK,    "$(S1){$(D1)-$(D2)}E:PVal-SP") 
+}
+
+record(ao,       "$(S1){$(D1)-$(D2)}E:PVal-SP") {
+  field(FLNK,    "$(S1){$(D1)-$(D2)}Phs:PVal-SP")
+}
+
+record(ao,      "$(S1){$(D1)-$(D2)}Phs:PVal-SP") {
+  field(FLNK,   "$(S1){$(D1)-$(D2)}State:001-Cmd")
+}
+
+record(seq,     "$(S1){$(D1)-$(D2)}State:001-Cmd") {
+# FF: Pha L to "closed_loop"; DOL should point to $(S1){$(D1)}Phs:RefAvg-I
+# FB: Pha L to "closed_loop"; DOL should point to $(S1){$(D1)}Phs:RefAvg-I
+# FF: Pha C to "closed_loop" since we shall set the C value through the SP:Pha-SP
+# FB: Pha C to "closed_loop" since we shall set the C value through the SP:Pha-SP
+# FF: Amp C to "closed_loop" since we shall set the C value through the SP:Amp-SP
+# FB: Amp C to "closed_loop" since we shall set the C value through the SP:Amp-SP
+  field(DO1,    "1")
+  field(LNK1,   "$(S1){$(D1)-$(TBL1)}Val:W.OMSL PP")
+  field(DLY1,   "0")
+  field(DO2,    "1")
+  field(LNK2,   "$(S1){$(D1)-$(TBL2)}Val:W.OMSL PP")
+  field(DLY2,   "0")
+  field(DO3,    "1")
+  field(LNK3,   "$(S1){$(D1)-$(TBL1)}Val:M.OMSL PP")
+  field(DLY3,   "0")
+  field(DO4,    "1")
+  field(LNK4,   "$(S1){$(D1)-$(TBL2)}Val:M.OMSL PP")
+  field(DLY4,   "0")
+  field(DO5,    "1")
+  field(LNK5,   "$(S1){$(D1)-$(TBL1)}Val:C.OMSL PP")
+  field(DLY5,   "0")
+  field(DO6,    "1")
+  field(LNK6,   "$(S1){$(D1)-$(TBL2)}Val:C.OMSL PP")
+  field(DLY6,   "1")
+  field(FLNK,   "$(S1){$(D1)-$(D2)}Phs:Val1-Calc")
+}
+
+record(calc,     "$(S1){$(D1)-$(D2)}Phs:Val1-Calc") {
+#
+# Field L (FB:ValW-SP) should contain the reference!
+# Example: PVAL from IQ = -138, Ref = 56
+# -138 - 56 = 194 = wrapped 194 - 360 = -166
+# To that value, -166, we should add the step + ref
+# -166 + 30 = -133 (ref will be added by table value W)
+#
+  field(DESC,    "Physics setpoint:")
+  field(CALC,    "A-B")
+  field(INPA,    "$(S1){$(D1)-$(D2)}Phs:PVal-SP")
+  field(INPB,    "$(S1){$(D1)-$(TBL2)}Val:W")
+  field(EGU,     "deg")
+  field(FLNK,    "$(S1){$(D1)-$(D2)}Phs:Val-Calc")
+}
+
+record(calcout,   "$(S1){$(D1)-$(D2)}Phs:Val-Calc") {
+#
+# Wrap into +-180 deg
+# Put the current setpoint back to Pha variable C = ValM
+# Since entering the SP:Pha-SP could have wiped that out!
+#
+  field(DESC,    "Physics setpoint:")
+  field(CALC,    "(A<B)?(A+D):((A>C)?(A-D):A)")
+  field(INPA,    "$(S1){$(D1)-$(D2)}Phs:Val1-Calc")
+  field(INPB,    "-180.0")
+  field(INPC,    "+180.0")
+  field(INPD,    "+360.0")
+  field(OUT,     "$(S1){$(D1)}Phs:Fb-SP PP")
+  field(FLNK,    "$(S1){$(D1)-$(D2)}E:Ft-SP")
+}
+
+# Save the extraction flat top fields: G, R
+
+record(ai,       "$(S1){$(D1)-$(D2)}E:Ft-SP") {
+  field(DESC,    "Injection flat-top:")
+  field(INP,     "$(S1){$(D1)-$(TBL2)}Val:G")
+  field(FLNK,    "$(S1){$(D1)-$(D2)}Phs:Ft-SP")
+}
+
+record(ai,       "$(S1){$(D1)-$(D2)}Phs:Ft-SP") {
+  field(DESC,    "Injection flat-top:")
+  field(INP,     "$(S1){$(D1)-$(TBL2)}Val:R")
+  field(FLNK,    "$(S1){$(D1)-$(D2)}E:New-Calc")
+}
+
+record(calcout, "$(S1){$(D1)-$(D2)}E:New-Calc") {
+  field(DESC,   "New amp:")
+  field(CALC,   "A+B")
+  field(INPA,   "$(S1){$(D1)-$(TBL2)}Val:C")
+  field(INPB,   "$(S1){$(D1)-$(D2)}E:Stp-SP")
+  field(OUT,    "$(S1){$(D1)-$(D2)}E:New-SP PP")
+}
+
+record(ao,	"$(S1){$(D1)-$(D2)}E:New-SP") {
+  field(DESC,   "New setpoint:")
+  field(DRVL,   "0")
+  field(DRVH,   "1")
+  field(LOPR,   "0")
+  field(HOPR,   "1")
+  field(FLNK,   "$(S1){$(D1)-$(D2)}Phs:New1-Calc  ")
+}
+
+record(calcout, "$(S1){$(D1)-$(D2)}Phs:New1-Calc") {
+  field(DESC,   "Calculating new phase 1:")
+  field(CALC,   "A+B")
+  field(INPA,   "$(S1){$(D1)-$(TBL2)}Val:M")
+  field(INPB,   "$(S1){$(D1)-$(D2)}Phs:Stp-SP")
+  field(OUT,    "$(S1){$(D1)-$(D2)}Phs:New1-SP PP")
+}
+
+record(ao,	"$(S1){$(D1)-$(D2)}Phs:New1-SP") {
+  field(DESC,   "New setpoint 1:")
+  field(EGU,    "deg")
+  field(FLNK,   "$(S1){$(D1)-$(D2)}Phs:New-Calc")
+}
+
+record(calcout, "$(S1){$(D1)-$(D2)}Phs:New-Calc") {
+  field(DESC,   "Calculating new phase 2:")
+  field(CALC,   "(A<B)?(A+D):((A>C)?(A-D):A)")
+  field(INPA,   "$(S1){$(D1)-$(D2)}Phs:New1-SP")
+  field(INPB,   "-180.0")
+  field(INPC,   "+180.0")
+  field(INPD,   "360.0")
+  field(OUT,    "$(S1){$(D1)-$(D2)}Phs:New-SP PP")
+}
+
+record(ao,	"$(S1){$(D1)-$(D2)}Phs:New-SP") {
+  field(DESC,   "New setpoint 2:")
+  field(DRVH,   "+180")
+  field(HOPR,   "+180")
+  field(DRVL,   "-180")
+  field(LOPR,   "-180")
+  field(EGU,    "deg")
+  field(FLNK,   "$(S1){$(D1)-$(D2)}E:FAmpl-Calc")
+}
+
+record(acalcout, "$(S1){$(D1)-$(D2)}E:FAmpl-Calc") {
+# Force pre-defined S function!
+  field(CALC,    "AA")
+  field(INAA,    "$(S1){$(D1)-$(D2)}E:SFunc")
+  field(OOPT,    "Every Time")
+  field(DOPT,    "Use CALC")
+  field(NELM,    "128")
+  field(NUSE,    "128")
+  field(OUT,     "$(S1){$(D1)-$(TBL2)}E:Eq3 PP")
+  field(FLNK,    "$(S1){$(D1)-$(D2)}Phs:FPhs-Calc")
+}
+
+record(acalcout, "$(S1){$(D1)-$(D2)}Phs:FPhs-Calc") {
+# Force pre-defined S function!
+  field(CALC,    "AA")
+  field(INAA,    "$(S1){$(D1)-$(D2)}Phs:SFunc")
+  field(OOPT,    "Every Time")
+  field(DOPT,    "Use CALC")
+  field(NELM,    "128")
+  field(NUSE,    "128")
+  field(OUT,     "$(S1){$(D1)-$(TBL2)}Phs:Eq3 PP")
+  field(FLNK,    "$(S1){$(D1)-$(D2)}State:010-Cmd")
+}
+
+record(ao,      "$(S1){$(D1)-$(D2)}Val:Dummy-SP") {
+}
+
+record(seq,     "$(S1){$(D1)-$(D2)}State:010-Cmd") {
+# Disable external trigger
+  field(DO1,    "0")
+#
+# Don't do it in the cage, use dummy
+   field(LNK1,   "$(S1){$(D1)-$(D2)}Val:Dummy-SP")
+#
+#  field(LNK1,   "BR-TS{EVR:L1A}Ena-Sel CPP")
+#  At the booster use PV BR-TS{EVR:L1A-Out:FP0}Ena-SP
+#  field(DLY1,   "2")
+#
+  field(DO2,    "1")
+  field(LNK2,   "$(S1){$(D1)-$(D2)}Val:Prog-Sts PP")
+  field(DLY2,   "0")
+#
+# Set current values, then set "closed_loops"
+#
+  field(DOL3,   "$(S1){$(D1)-$(D2)}E:PVal-SP")
+  field(LNK3,   "$(S1){$(D1)}E:Fb-SP PP")
+  field(DLY3,   "1")
+  field(DO4,    "2")
+  field(LNK4,   "$(S1){$(D1)-$(D2)}Val:Prog-Sts PP")
+  field(DLY4,   "0")
+#
+# Set Pha C to current value
+# Phs:PVal is machine SP, should use physics SP here!
+#
+  field(DOL5,   "$(S1){$(D1)-$(D2)}Phs:Val-Calc")
+  field(LNK5,   "$(S1){$(D1)}Phs:Fb-SP PP")
+  field(DLY5,   "1")
+  field(DO6,    "3")
+  field(LNK6,   "$(S1){$(D1)-$(D2)}Val:Prog-Sts PP")
+  field(DLY6,   "0")
+  field(FLNK,   "$(S1){$(D1)-$(D2)}State:020-Cmd")
+}
+
+record(seq,     "$(S1){$(D1)-$(D2)}State:020-Cmd") {
+# Pha G to "supervisory"
+  field(DO1,    "0")
+  field(LNK1,   "$(S1){$(D1)-$(TBL2)}Val:R.OMSL PP")
+  field(DLY1,   "0")
+  field(DO2,    "4")
+  field(LNK2,   "$(S1){$(D1)-$(D2)}Val:Prog-Sts PP")
+  field(DLY2,   "0")
+# Amp G to "supervisory"
+  field(DO3,    "0")
+  field(LNK3,   "$(S1){$(D1)-$(TBL2)}Val:G.OMSL PP")
+  field(DLY3,   "0")
+  field(DO4,    "5")
+  field(LNK4,   "$(S1){$(D1)-$(D2)}Val:Prog-Sts PP")
+  field(DLY4,   "0")
+# Pha D to "supervisory"
+  field(DO5,    "0")
+  field(LNK5,   "$(S1){$(D1)-$(TBL2)}Val:N.OMSL PP")
+  field(DLY5,   "0")
+  field(DO6,    "6")
+  field(LNK6,   "$(S1){$(D1)-$(D2)}Val:Prog-Sts PP")
+  field(DLY6,   "0")
+# Amp D to "supervisory"
+  field(DO7,    "0")
+  field(LNK7,   "$(S1){$(D1)-$(TBL2)}Val:D.OMSL PP")
+  field(DLY7,   "0")
+  field(DO8,    "7")
+  field(LNK8,   "$(S1){$(D1)-$(D2)}Val:Prog-Sts PP")
+  field(DLY8,   "0")
+  field(FLNK,   "$(S1){$(D1)-$(D2)}State:030-Cmd")
+}
+
+
+record(seq,     "$(S1){$(D1)-$(D2)}State:030-Cmd") {
+# Pha J to "supervisory"
+  field(DO1,    "0")
+  field(LNK1,   "$(S1){$(D1)-$(TBL2)}Val:U.OMSL PP")
+  field(DLY1,   "0")
+  field(DO2,    "8")
+  field(LNK2,   "$(S1){$(D1)-$(D2)}Val:Prog-Sts PP")
+  field(DLY2,   "0")
+# Amp J to "supervisory"
+  field(DO3,    "0")
+  field(LNK3,   "$(S1){$(D1)-$(TBL2)}Val:J.OMSL PP")
+  field(DLY3,   "0")
+  field(DO4,    "9")
+  field(LNK4,   "$(S1){$(D1)-$(D2)}Val:Prog-Sts PP")
+  field(DLY4,   "0")
+# Set Pha D to 51.0
+  field(DO5,    "51.0")
+  field(LNK5,   "$(S1){$(D1)-$(TBL2)}Val:N PP")
+  field(DLY5,   "0")
+  field(DO6,    "10")
+  field(LNK6,   "$(S1){$(D1)-$(D2)}Val:Prog-Sts PP")
+  field(DLY6,   "0")
+# Set Amp D to 51.0
+  field(DO7,    "51.0")
+  field(LNK7,   "$(S1){$(D1)-$(TBL2)}Val:D PP")
+  field(DLY7,   "0")
+  field(DO8,    "11")
+  field(LNK8,   "$(S1){$(D1)-$(D2)}Val:Prog-Sts PP")
+  field(DLY8,   "0")
+# Set Pha J to 450.0
+  field(DO9,    "450.0")
+  field(LNK9,   "$(S1){$(D1)-$(TBL2)}Val:U PP")
+  field(DLY9,   "0")
+  field(FLNK,   "$(S1){$(D1)-$(D2)}State:040-Cmd")
+}
+
+record(seq,     "$(S1){$(D1)-$(D2)}State:040-Cmd") {
+  field(DO1,    "12")
+  field(LNK1,   "$(S1){$(D1)-$(D2)}Val:Prog-Sts PP")
+  field(DLY1,   "0")
+# Set Amp J to 450.0
+  field(DO2,    "450.0")
+  field(LNK2,   "$(S1){$(D1)-$(TBL2)}Val:J PP")
+  field(DLY2,   "0")
+  field(DO3,    "13")
+  field(LNK3,   "$(S1){$(D1)-$(D2)}Val:Prog-Sts PP")
+  field(DLY3,   "0")
+#
+# Set Amp G to new value
+#
+  field(DOL4,   "$(S1){$(D1)-$(D2)}E:New-SP")
+  field(LNK4,   "$(S1){$(D1)-$(TBL2)}Val:G PP")
+  field(DLY4,   "0")
+  field(DO5,    "14")
+  field(LNK5,   "$(S1){$(D1)-$(D2)}Val:Prog-Sts PP")
+  field(DLY5,   "0")
+#
+# Set Pha G to new value
+#
+  field(DOL6,   "$(S1){$(D1)-$(D2)}Phs:New-SP" )
+  field(LNK6,   "$(S1){$(D1)-$(TBL2)}Val:R PP")
+## OBS! Delay here ...
+  field(DLY6,   "1")
+  field(DO7,    "15")
+  field(LNK7,   "$(S1){$(D1)-$(D2)}Val:Prog-Sts PP")
+  field(DLY7,   "0")
+# Select the expression SFunc
+  field(DO8,    "2")
+  field(LNK8,   "$(S1){$(D1)-$(TBL2)}Cnt:Eq-Sel  PP")
+  field(DLY8,   "0")
+  field(DO9,    "16")
+  field(LNK9,   "$(S1){$(D1)-$(D2)}Val:Prog-Sts PP")
+  field(DLY9,   "0")
+  field(FLNK,   "$(S1){$(D1)-$(D2)}State:050-Cmd")
+}
+
+record(seq,     "$(S1){$(D1)-$(D2)}State:050-Cmd") {
+# Expression Apply - downloads the ramptable
+  field(DO1,    "1")
+  field(LNK1,   "$(S1){$(D1)-$(TBL2)}Cmd:Apply  PP")
+  field(DLY1,   "3")
+  field(DO2,    "17")
+  field(LNK2,   "$(S1){$(D1)-$(D2)}Val:Prog-Sts PP")
+  field(DLY2,   "0")
+#
+# Trigger FB ramp once. It also triggers the scopes!
+#
+# Don't trigger the test stand in the cage
+# since the external trigger cannot be turned off there!!!
+#
+  field(DO3,    "1")
+  field(LNK3,   "$(S1){$(D1)}Trig:Ramp-Cmd PP")
+  field(DLY3,   "3")
+  field(DO4,    "18")
+  field(LNK4,   "$(S1){$(D1)-$(D2)}Val:Prog-Sts PP")
+  field(DLY4,   "0")
+#
+# Write the new Amp to the Amp C
+#
+  field(DOL5,   "$(S1){$(D1)-$(TBL2)}Val:G PP")
+  field(LNK5,   "$(S1){$(D1)}E:Fb-SP PP")
+# OBS! Delay here ...
+  field(DLY5,   "1")
+  field(DO6,    "19")
+  field(LNK6,   "$(S1){$(D1)-$(D2)}Val:Prog-Sts PP")
+  field(DLY6,   "0")
+#
+# Write the new Phs to the Phs C = ValM
+#
+  field(DOL7,   "$(S1){$(D1)-$(TBL2)}Val:R")
+  field(LNK7,   "$(S1){$(D1)}Phs:Fb-SP PP")
+  field(DLY7,   "1")
+  field(DO8,    "20")
+  field(LNK8,   "$(S1){$(D1)-$(D2)}Val:Prog-Sts PP")
+  field(DLY8,   "0")
+#
+# Put back the Amp G to Extraction flat-top
+#
+  field(DOL9,   "$(S1){$(D1)-$(D2)}E:Ft-SP")
+  field(LNK9,   "$(S1){$(D1)-$(TBL2)}Val:G PP")
+  field(DLY9,   "1")
+  field(FLNK,   "$(S1){$(D1)-$(D2)}State:060-Cmd")
+}
+
+record(seq,     "$(S1){$(D1)-$(D2)}State:060-Cmd") {
+  field(DO1,    "21")
+  field(LNK1,   "$(S1){$(D1)-$(D2)}Val:Prog-Sts PP")
+  field(DLY1,   "0")
+#
+# Put back the Phs G to Extraction flat-top
+#
+  field(DOL2,   "$(S1){$(D1)-$(D2)}Phs:Ft-SP")
+  field(LNK2,   "$(S1){$(D1)-$(TBL2)}Val:R PP")
+  field(DLY2,   "1")
+  field(DO3,    "22")
+  field(LNK3,   "$(S1){$(D1)-$(D2)}Val:Prog-Sts PP")
+  field(DLY3,   "0")
+# Select expression Booster Ramp
+  field(DO4,    "0")
+  field(LNK4,   "$(S1){$(D1)-$(TBL2)}Cnt:Eq-Sel PP")
+  field(DLY4,   "1")
+  field(DO5,    "23")
+  field(LNK5,   "$(S1){$(D1)-$(D2)}Val:Prog-Sts PP")
+  field(DLY5,   "0")
+  field(FLNK,   "$(S1){$(D1)-$(D2)}State:070-Cmd")
+}
+
+record(seq,     "$(S1){$(D1)-$(D2)}State:070-Cmd") {
+# Expression Apply - downloads the ramptable
+  field(DO1,    "1")
+  field(LNK1,   "$(S1){$(D1)-$(TBL2)}Cmd:Apply PP")
+  field(DLY1,   "2")
+  field(DO2,    "24")
+  field(LNK2,   "$(S1){$(D1)-$(D2)}Val:Prog-Sts PP")
+  field(DLY2,   "0")
+#
+# Re-enable the external trigger
+# Don't do it for the test stand in the cage!
+#
+  field(DO3,    "1")
+#
+# Don't do it for the test stand in the RF cage!
+# Use dummy
+#
+# field(LNK3,   "BR-TS{EVR:L1A}Ena-Sel CPP")
+
+   field(LNK3,  "$(S1){$(D1)-$(D2)}Val:Dummy-SP")
+#
+#  field(LNK1,  "BR-TS{EVR:L1A}Ena-Sel CPP")
+#
+#  At the booster use PV BR-TS{EVR:L1A-Out:FP0}Ena-SP
+#  field(DLY3,   "3")
+#
+  field(DO4,    "25")
+  field(LNK4,   "$(S1){$(D1)-$(D2)}Val:Prog-Sts PP")
+  field(DLY4,   "0")
+  field(FLNK,   "$(S1){$(D1)-$(D2)}State:080-Cmd PP")
+}
+
+record(ao,      "$(S1){$(D1)-$(D2)}Val:Prog-Sts") {
+  field(DESC,   "Transition in progress:")
+  field(LOPR,   "0")
+  field(HOPR,   "25")
+  field(PINI,   "YES")
+}
+
+record(seq,     "$(S1){$(D1)-$(D2)}State:080-Cmd") {
+  field(DO1,    "0")
+  field(LNK1,   "$(S1){$(D1)-$(D2)}Sts:Bsy-Sts PP")
+  field(DO2,    "0")
+  field(LNK2,   "$(S1){$(D1)-$(D2)}Sts:Bsy-Sts.DISA PP")
+  field(DLY2,   "1")
+  field(DO1,    "0")
+  field(LNK3,   "$(S1){$(D1)-$(D2)}Sts:Bsy-Sts PP")
+  field(DLY3,   "1")
+  field(DO4,    "0")
+  field(LNK4,   "$(S1){$(D1)-$(D2)}Val:Prog-Sts PP")
+}
+
+

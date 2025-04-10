@@ -1,0 +1,322 @@
+#
+# one ADC channel
+#
+# P - Record name prefix
+# S - Signal name
+# PORT - asyn port name
+# ADDR - Channel address (0-7)
+#
+# External Records
+# Inputs:
+#  $(S1){$(D1)}T:Scope-I - from okllrf.db
+#
+# Forword:
+#  $(S1){$(D1)}Update:Done-FO_ - from okllrf.db
+
+record(waveform, "$(S1){$(D1)-$(SD1)}Val:I-I") {
+  field(DTYP,    "asynFloat64ArrayIn")
+  field(INP ,    "@asyn($(PORT),$(ADDR))ADC I")
+  field(FTVL,    "DOUBLE")
+  field(NELM,    "512")
+  field(FLNK,    "$(S1){$(D1)-$(SD1)}Val:Q-I")
+}
+
+record(waveform, "$(S1){$(D1)-$(SD1)}Val:Q-I") {
+  field(DTYP,    "asynFloat64ArrayIn")
+  field(INP ,    "@asyn($(PORT),$(ADDR))ADC Q")
+  field(FTVL,    "DOUBLE")
+  field(NELM,    "512")
+  field(FLNK,    "$(S1){$(D1)-$(SD1)}Val:IAvg-Calc")
+}
+
+#=================================================================
+record(acalcout, "$(S1){$(D1)-$(SD1)}Val:IAvg-Calc") {
+  field(CALC,    "AVG(AA)")
+  field(INAA,    "$(S1){$(D1)-$(SD1)}Val:I-I")
+  field(NELM,    "512")
+  field(NUSE,    "512")
+  field(OUT,     "$(S1){$(D1)-$(SD1)}Val:IAvg-I PP")
+}
+
+record(ai,	 "$(S1){$(D1)-$(SD1)}Val:IAvg-I") {
+  field(DESC,    "Avg I:")
+  field(HOPR,    "+1.0")
+  field(LOPR,    "-1.0")
+  field(PREC,    "3")
+  field(FLNK,    "$(S1){$(D1)-$(SD1)}Val:QAvg-Calc")
+}
+
+record(acalcout, "$(S1){$(D1)-$(SD1)}Val:QAvg-Calc") {
+  field(CALC,    "AVG(AA)")
+  field(INAA,    "$(S1){$(D1)-$(SD1)}Val:Q-I")
+  field(NELM,    "512")
+  field(NUSE,    "512")
+  field(OUT,     "$(S1){$(D1)-$(SD1)}Val:QAvg-I PP")
+}
+
+record(ai,	 "$(S1){$(D1)-$(SD1)}Val:QAvg-I") {
+  field(DESC,    "Avg Q:")
+  field(HOPR,    "+1.0")
+  field(LOPR,    "-1.0")
+  field(PREC,    "3")
+  field(FLNK,    "$(S1){$(D1)-$(SD1)}Val:IQ-Calc")
+}
+#=================================================================
+
+record(aSub,     "$(S1){$(D1)-$(SD1)}Val:IQ-Calc") {
+  field(SNAM,    "IQ2AP")
+  field(FTA ,    "DOUBLE")
+  field(FTB ,    "DOUBLE")
+  field(FTVA ,   "DOUBLE")
+  field(FTVB ,   "DOUBLE")
+  field(NOA ,    "512")
+  field(NOB ,    "512")
+  field(NOVA,    "512")
+  field(NOVB,    "512")
+  field(INPA,    "$(S1){$(D1)-$(SD1)}Val:I-I MSS")
+  field(INPB,    "$(S1){$(D1)-$(SD1)}Val:Q-I MSS")
+  field(OUTA,    "$(S1){$(D1)-$(SD1)}E:ValN-I PP MSS")
+  field(OUTB,    "$(S1){$(D1)-$(SD1)}Phs:I PP MSS")
+}
+
+# Amplitude
+
+record(waveform, "$(S1){$(D1)-$(SD1)}E:ValN-I") {
+  field(FTVL,    "DOUBLE")
+  field(NELM,    "512")
+  field(FLNK,    "$(S1){$(D1)-$(SD1)}E:N-Calc")
+}
+
+record(acalcout, "$(S1){$(D1)-$(SD1)}E:N-Calc") {
+  field(DESC,    "Voltage:")
+  field(CALC,    "AA*A/B")
+  field(INAA,    "$(S1){$(D1)-$(SD1)}E:ValN-I")
+  field(INPA,    "$(S1){$(D1)-$(SD1)}E:Scale-SP")
+  field(INPB,    "1000.0")
+  field(NELM,    "512")
+  field(NUSE,    "512")
+  field(OUT,     "$(S1){$(D1)-$(SD1)}E:I PP")
+}
+
+record(waveform, "$(S1){$(D1)-$(SD1)}E:I") {
+  field(FTVL,    "DOUBLE")
+  field(NELM,    "512")
+  field(EGU,     "kV")
+  field(PREC,    "1")
+  field(FLNK,    "$(S1){$(D1)-$(SD1)}E:Avg-Calc")
+}
+
+#=================================================================
+record(acalcout, "$(S1){$(D1)-$(SD1)}E:Avg-Calc") {
+  field(CALC,    "AVG(AA)")
+  field(INAA,    "$(S1){$(D1)-$(SD1)}E:I")
+  field(NELM,    "512")
+  field(NUSE,    "512")
+  field(OUT,     "$(S1){$(D1)-$(SD1)}E:Avg-I PP")
+}
+
+record(ai,	 "$(S1){$(D1)-$(SD1)}E:Avg-I") {
+  field(DESC,    "Normalized phase:")
+  field(HOPR,    "2200.0")
+  field(LOPR,    "0.0")
+  field(PREC,    "1")
+  field(EGU,     "kV")
+  field(FLNK,    "$(S1){$(D1)-$(SD1)}E:Stats-Calc")
+}
+#=================================================================
+
+record(aSub,     "$(S1){$(D1)-$(SD1)}E:Stats-Calc") {
+  field(SNAM,    "Wf Stats")
+  field(FTA ,    "DOUBLE")
+  field(FTB ,    "DOUBLE")
+  field(FTC ,    "DOUBLE")
+  field(FTD ,    "DOUBLE")
+  field(FTVA ,   "DOUBLE")
+  field(FTVB ,   "DOUBLE")
+  field(NOA ,    "512")
+  field(NOB ,    "512")
+  field(INPA,    "$(S1){$(D1)-$(SD1)}E:ValN-I MSS")
+  field(INPB,    "$(S1){$(D1)}Time:Scope-I MSS")
+  field(INPC,    "$(S1){$(D1)}Time:Wnd0-SP CPP MSS")
+  field(INPD,    "$(S1){$(D1)}Time:WndW-SP CPP MSS")
+  field(OUTA,    "$(S1){$(D1)-$(SD1)}E:NAvg-I PP MSS")
+  field(OUTB,    "$(S1){$(D1)-$(SD1)}E:Std-I PP MSS")
+}
+
+record(ai,       "$(S1){$(D1)-$(SD1)}E:NAvg-I") {
+  field(PREC,    "3")
+}
+
+record(ai,       "$(S1){$(D1)-$(SD1)}E:Std-I") {
+  field(PREC,    "4")
+}
+
+# Phase
+
+record(waveform, "$(S1){$(D1)-$(SD1)}Phs:I") {
+  field(FTVL,    "DOUBLE")
+  field(NELM,    "512")
+  field(FLNK,    "$(S1){$(D1)-$(SD1)}Phs:Unwr-Calc")
+}
+
+#
+# need unwrapped phase to calculate the average
+#
+record(aSub,     "$(S1){$(D1)-$(SD1)}Phs:Unwr-Calc") {
+  field(SNAM,    "Phase Unwrap")
+  field(FTA,     "DOUBLE")
+  field(FTB,     "DOUBLE")
+  field(FTVA,    "DOUBLE")
+  field(NOA,     "512")
+  field(NOVA,    "512")
+  field(INPA,    "$(S1){$(D1)-$(SD1)}Phs:I MSS")
+  field(NOB,     "1")
+  field(INPB,    "10")
+  field(OUTA,    "$(S1){$(D1)-$(SD1)}Phs:Stats-Calc.A PP MSS")
+  field(FLNK,    "$(S1){$(D1)-$(SD1)}Phs:2-Calc")
+}
+
+record(acalcout, "$(S1){$(D1)-$(SD1)}Phs:2-Calc") {
+  field(CALC,    "AA+A")
+  field(INAA,    "$(S1){$(D1)-$(SD1)}Phs:I")
+  field(INPA,    "180.0")
+  field(NELM,    "512")
+  field(NUSE,    "512")
+  field(OUT,     "$(S1){$(D1)-$(SD1)}Phs:2-I")
+  field(FLNK,    "$(S1){$(D1)-$(SD1)}Phs:2-I")
+}
+
+record(waveform, "$(S1){$(D1)-$(SD1)}Phs:2-I") {
+  field(FTVL, 	 "DOUBLE")
+  field(NELM,    "512")
+  field(FLNK,    "$(S1){$(D1)-$(SD1)}Phs:Avg-Calc")
+}
+
+record(acalcout, "$(S1){$(D1)-$(SD1)}Phs:Avg-Calc") {
+  field(CALC,    "AVG(AA)")
+  field(INAA,    "$(S1){$(D1)-$(SD1)}Phs:2-I")
+  field(NELM,    "512")
+  field(NUSE,    "512")
+  field(OUT,     "$(S1){$(D1)-$(SD1)}Phs:Avg2-I PP")
+}
+
+record(ao,       "$(S1){$(D1)-$(SD1)}Phs:Avg2-I") {
+  field(DESC,    "Calculated average phase:")
+  field(HOPR,    "+360.0")
+  field(LOPR,    "+000.0")
+  field(PREC,    "1")
+  field(EGU,     "deg")
+  field(FLNK,    "$(S1){$(D1)-$(SD1)}Phs:Avg1-I")
+}
+
+record(calcout,  "$(S1){$(D1)-$(SD1)}Phs:Avg1-I") {
+  field(CALC,    "A-B")
+  field(INPA,    "$(S1){$(D1)-$(SD1)}Phs:Avg2-I")
+  field(INPB,    "+180.0")
+  field(HOPR,    "+180.0")
+  field(LOPR,    "-180.0")
+  field(PREC,    "1")
+  field(EGU,     "deg")
+  field(OUT,     "$(S1){$(D1)-$(SD1)}Phs:Avg-I PP")
+  field(FLNK,    "$(S1){$(D1)-$(SD1)}Phs:N2-Calc")
+}
+
+record(ao,       "$(S1){$(D1)-$(SD1)}Phs:Avg-I") {
+  field(DESC,    "Calculated average phase:")
+  field(DRVH,    "+180.0")
+  field(HOPR,    "+180.0")
+  field(LOPR,    "-180.0")
+  field(DRVL,    "-180.0")
+  field(PREC,    "1")
+  field(EGU,     "deg")
+}
+
+record(acalcout, "$(S1){$(D1)-$(SD1)}Phs:N2-Calc") {
+  field(CALC,    "AA-A")
+  field(INAA,    "$(S1){$(D1)-$(SD1)}Phs:I")
+  field(INPA,    "$(S1){$(D1)-$(SD0)}Phs:Avg-I")
+  field(NELM,    "512")
+  field(NUSE,    "512")
+  field(OUT,     "$(S1){$(D1)-$(SD1)}Phs:N2-I PP")
+}
+
+record(waveform, "$(S1){$(D1)-$(SD1)}Phs:N2-I") {
+  field(DESC,    "Norm uw phase:")
+  field(FTVL,    "DOUBLE")
+  field(NELM,    "512")
+  field(FLNK,    "$(S1){$(D1)-$(SD1)}Phs:N1-Calc")
+}
+
+record(aSub,     "$(S1){$(D1)-$(SD1)}Phs:N1-Calc") {
+ field(SNAM,     "Wf Pha Unwrap")
+ field(FTA ,     "DOUBLE")
+ field(NOA ,     "512")
+ field(FTVA,     "DOUBLE")
+ field(NOVA,     "512")
+ field(INPA,     "$(S1){$(D1)-$(SD1)}Phs:N2-I")
+ field(OUTA,     "$(S1){$(D1)-$(SD1)}Phs:N1-I PP")
+}
+
+record(waveform, "$(S1){$(D1)-$(SD1)}Phs:N1-I") {
+  field(DESC,    "Normalized phase:")
+  field(FTVL,    "DOUBLE")
+  field(NELM,    "512")
+  field(FLNK,    "$(S1){$(D1)-$(SD1)}Phs:N1Avg-Calc")
+}
+
+record(acalcout, "$(S1){$(D1)-$(SD1)}Phs:N1Avg-Calc") {
+  field(CALC,    "AVG(AA)")
+  field(INAA,    "$(S1){$(D1)-$(SD1)}Phs:N1-I")
+  field(NELM,    "512")
+  field(NUSE,    "512")
+  field(OUT,     "$(S1){$(D1)-$(SD1)}Phs:N1Avg-I PP")
+}
+
+record(ai,	 "$(S1){$(D1)-$(SD1)}Phs:N1Avg-I") {
+  field(DESC,    "Normalized phase:")
+  field(HOPR,    "+180.0")
+  field(LOPR,    "-180.0")
+  field(PREC,    "1")
+  field(EGU,     "deg")
+}
+
+record(aSub,     "$(S1){$(D1)-$(SD1)}Phs:Stats-Calc") {
+  field(SNAM,    "Wf Stats")
+  field(FTA ,    "DOUBLE")
+  field(FTB ,    "DOUBLE")
+  field(FTC ,    "DOUBLE")
+  field(FTD ,    "DOUBLE")
+  field(FTVA ,   "DOUBLE")
+  field(FTVB ,   "DOUBLE")
+  field(NOA ,    "512")
+  field(NOB ,    "512")
+#
+# comes from Phs:Unwr-Calc - field(OUTA, Phs:Stats-Calc.A PP MSS")
+#
+  field(INPB,    "$(S1){$(D1)}Time:Scope-I MSS")
+  field(INPC,    "$(S1){$(D1)}Time:Wnd0-SP CPP MSS")
+  field(INPD,    "$(S1){$(D1)}Time:WndW-SP CPP MSS")
+  field(OUTA,    "$(S1){$(D1)-$(SD1)}Phs:AvgWrap-Calc.A PP MSS")
+  field(OUTB,    "$(S1){$(D1)-$(SD1)}Phs:Std-I   PP MSS")
+}
+
+# re-wrap the phase for display
+
+record(calcout,  "$(S1){$(D1)-$(SD1)}Phs:AvgWrap-Calc") {
+  # Unfortunately the modulo operator '%' casts to integer first
+  field(CALC,    "(A>B)?A-D:((A<C)?A+D:A)")
+  field(INPB,    "+180.0")
+  field(INPC,    "-180.0")
+  field(INPD,    "+360.0")
+  field(OUT ,    "$(S1){$(D1)-$(SD1)}Phs:Mean-I    PP MSS")
+}
+
+record(ai,       "$(S1){$(D1)-$(SD1)}Phs:Mean-I") {
+  field(PREC,    "2")
+  field(EGU ,    "deg")
+}
+
+record(ai,       "$(S1){$(D1)-$(SD1)}Phs:Std-I") {
+  field(PREC,    "4")
+  field(EGU ,    "deg")
+}

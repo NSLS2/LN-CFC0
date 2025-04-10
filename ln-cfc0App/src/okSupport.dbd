@@ -1,0 +1,11 @@
+#
+# Link format
+#
+# @SN=Serialnum, EP=EndPoint, BIT=Bit#orMask, BSIZE=Block size
+#
+
+registrar(okifaceReg)
+registrar(llrfPortReg)
+registrar(calcRegister)
+
+

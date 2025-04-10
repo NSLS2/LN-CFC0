@@ -1,0 +1,1203 @@
+record(longin,  "$(S1){$(D1)}DI:Ep20-I") {
+  field(DTYP,   "asynInt32")
+  field(DESC,   "WireOut Ep 20:")
+  field(INP ,   "@asyn($(PORT),0)WireOut EP20")
+  field(SCAN,   "I/O Intr")
+  field(FLNK,   "$(S1){$(D1)}DI:B00Ep20")
+}
+
+record(calcout, "$(S1){$(D1)}DI:B00Ep20") {
+  field(DESC,   "Scope acquiring:")
+  field(CALC,   "(A & B)?1:0")
+  field(INPA,   "$(S1){$(D1)}DI:Ep20-I")
+  field(INPB,   "1")
+  field(FLNK,   "$(S1){$(D1)}DI:B01Ep20")
+}
+
+record(calcout, "$(S1){$(D1)}DI:B01Ep20") {
+  field(DESC,   "Scope readout busy:")
+  field(CALC,   "(A & B)?1:0")
+  field(INPA,   "$(S1){$(D1)}DI:Ep20-I")
+  field(INPB,   "2")
+  field(FLNK,   "$(S1){$(D1)}DI:B02Ep20")
+}
+
+record(calcout, "$(S1){$(D1)}DI:B02Ep20") {
+  field(DESC,   "Ramp busy:")
+  field(CALC,   "(A & B)?1:0")
+  field(INPA,   "$(S1){$(D1)}DI:Ep20-I")
+  field(INPB,   "4")
+  field(FLNK,   "$(S1){$(D1)}DI:B03Ep20")
+}
+
+record(calcout, "$(S1){$(D1)}DI:B03Ep20") {
+  field(DESC,   "FF busy:")
+  field(CALC,   "(A & B)?1:0")
+  field(INPA,   "$(S1){$(D1)}DI:Ep20-I")
+  field(INPB,   "8")
+  field(FLNK,   "$(S1){$(D1)}DI:B04Ep20")
+}
+
+record(calcout, "$(S1){$(D1)}DI:B04Ep20") {
+  field(DESC,   "STTrip:")
+  field(CALC,   "(A & B)?1:0")
+  field(INPA,   "$(S1){$(D1)}DI:Ep20-I")
+  field(INPB,   "16")
+  field(FLNK,   "$(S1){$(D1)}DI:B05Ep20")
+}
+
+record(calcout, "$(S1){$(D1)}DI:B05Ep20") {
+  field(DESC,   "RF inhibit:")
+  field(CALC,   "(A & B)?1:0")
+  field(INPA,   "$(S1){$(D1)}DI:Ep20-I")
+  field(INPB,   "32")
+  field(HIHI,   "0.9")
+  field(HHSV,   "MAJOR")
+  field(FLNK,   "$(S1){$(D1)}Cmd:Inh-Fo")
+}
+
+############################################################
+# JAN. 17, 2018, B. Holub: RF inhibit
+# should stop ramp and zero the set point
+############################################################
+record(fanout,   "$(S1){$(D1)}Cmd:Inh-Fo") {
+  field(LNK1,    "$(S1){$(D1)}Cmd:Stop-Calc")
+  field(LNK2,    "$(S1){$(D1)}DI:B06Ep20")
+}
+
+record(calcout,  "$(S1){$(D1)}Cmd:Stop-Calc") {
+  field(DESC,    "RF inhibit stop ramp:")
+  field(CALC,    "A")
+  field(INPA,    "$(S1){$(D1)}DI:B05Ep20")
+  field(OUT,     "$(S1){$(D1)}Cmd:Stop1-Seq.PROC PP")
+  field(OOPT,    "When Non-zero")
+}
+
+record(seq,      "$(S1){$(D1)}Cmd:Stop1-Seq") {
+  field(DESC,    "RF inhibit stop ramp:")
+#  field(DO1,     "0")
+#  field(LNK1,    "$(S1){$(D1)-RAMP}Enbl:Run PP")
+#  field(DLY1,    "0")
+  field(FLNK,    "$(S1){$(D1)}Cmd:Stop2-Seq")
+}
+
+record(seq,      "$(S1){$(D1)}Cmd:Stop2-Seq") {
+  field(DESC,    "RF inhibit stop ramp:")
+  field(DO1,     "0")
+  field(LNK1,    "$(S1){$(D1)}E:SP.OROC PP")
+  field(DLY1,    "0")
+  field(DO2,     "0")
+  field(LNK2,    "$(S1){$(D1)}E:SP PP")
+  field(DLY2,    "0")
+  field(DO3,     "0")
+  field(LNK3,    "$(S1){$(D1)}E:Fb-SP PP")
+  field(DLY3,    "0")
+}
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+############################################################
+#===========================================================
+
+record(calcout, "$(S1){$(D1)}DI:B06Ep20") {
+  field(DESC,   "Circular buffer trig:")
+  field(CALC,   "(A & B)?1:0")
+  field(INPA,   "$(S1){$(D1)}DI:Ep20-I")
+  field(INPB,   "64")
+  field(HIHI,   "0.9")
+  field(HHSV,   "MAJOR")
+  field(OUT,    "$(S1){$(D1)-$(SD8)}Sts:I PP")
+}
+
+record(bi,      "$(S1){$(D1)-$(SD8)}Sts:I") {
+  field(DESC,   "eQuench Status:")
+  field(ZNAM,   "OK")
+  field(ZSV,    "NO_ALARM")
+  field(ONAM,   "TRIP")
+  field(OSV,    "MAJOR")
+  field(FLNK,   "$(S1){$(D1)}DI:B07Ep20")
+}
+
+record(calcout, "$(S1){$(D1)}DI:B07Ep20") {
+# Previously QUENCH trip
+  field(DESC,   "WOut Ep 20 bit 7:")
+  field(CALC,   "(A & B)?1:0")
+  field(INPA,   "$(S1){$(D1)}DI:Ep20-I")
+  field(INPB,   "128")
+  field(HIHI,   "0.9")
+  field(HHSV,   "MAJOR")
+  field(FLNK,   "$(S1){$(D1)}DI:B08Ep20")
+}
+
+record(calcout, "$(S1){$(D1)}DI:B08Ep20") {
+# Previously VACUUM trip
+  field(DESC,   "WOut Ep 20 bit 8:")
+  field(CALC,   "(A & B)?1:0")
+  field(INPA,   "$(S1){$(D1)}DI:Ep20-I")
+  field(INPB,   "256")
+  field(HIHI,   "0.9")
+  field(HHSV,   "MAJOR")
+  field(FLNK,   "$(S1){$(D1)}DI:B09Ep20")
+}
+
+record(calcout, "$(S1){$(D1)}DI:B09Ep20") {
+  field(DESC,   "Vacuum conditioning:")
+  field(CALC,   "(A & B)?1:0")
+  field(INPA,   "$(S1){$(D1)}DI:Ep20-I")
+  field(INPB,   "512")
+  field(HIHI,   "0.9")
+  field(HHSV,   "MAJOR")
+  field(FLNK,   "$(S1){$(D1)}DI:B10Ep20")
+}
+
+record(calcout, "$(S1){$(D1)}DI:B10Ep20") {
+  field(DESC,   "Tuner: Lower limit sw:")
+  field(CALC,   "(A & B)?1:0")
+  field(INPA,   "$(S1){$(D1)}DI:Ep20-I")
+  field(INPB,   "1024")
+  field(OUT,    "$(S1){$(D1)-$(SD1)}Sw:Low-I PP")
+}
+
+record(bo,      "$(S1){$(D1)-$(SD1)}Sw:Low-I" ) {
+  field(DESC,   "Lower limit sw:")
+  field(ZNAM,   "Off")
+  field(ONAM,   "On")
+  field(FLNK,   "$(S1){$(D1)}DI:B11Ep20")
+}
+
+record(calcout, "$(S1){$(D1)}DI:B11Ep20") {
+# This is AVAGO2!
+  field(DESC,   "Ramp down:")
+  field(CALC,   "(A & B)?1:0")
+  field(INPA,   "$(S1){$(D1)}DI:Ep20-I")
+  field(INPB,   "2048")
+  field(HIHI,   "0.9")
+  field(HHSV,   "MAJOR")
+  field(FLNK,   "$(S1){$(D1)}DI:B12Ep20")
+}
+
+#-------------------------------------------------------
+# B. Holub, June 9, 2014: AVAGO2 should open the loop
+# and set the closed loop setpoint to zero!
+#
+#
+record(calcout, "$(S1){$(D1)}Cmd:Open-Calc") {
+  field(DESC,   "Open the loop:")
+  field(SCAN,   "1 second")
+#-------------------------------------------------------
+# APR. 27, 2016, B. Holub, also TXM NOT in RF state:
+# B12Ep20 should zero the setpoints
+#-------------------------------------------------------
+  field(CALC,   "A||B||C")
+  field(INPA,   "$(S1){$(D1)}DI:B11Ep20")
+  field(INPB,   "$(S1){$(D1)}DI:B12Ep20")
+  field(INPC,   "$(S1){$(D1)}DI:B05Ep20")
+  field(OOPT,   "When Non-zero")
+  field(OUT,    "$(S1){$(D1)}Cmd:Open1.PROC PP")
+}
+
+record(seq,     "$(S1){$(D1)}Cmd:Open1") {
+# Disables feedback = opens the loop
+  field(DO1,    "0")
+  field(LNK1,   "$(S1){$(D1)-$(TBL2)}Enbl:Cmd PP")
+# Sets the amplitude OROC = 0
+  field(DO2,    "0")
+  field(LNK2,   "$(S1){$(D1)}E:Fb-SP.OROC PP")
+  field(DLY2,   "0.1")
+# APR.19, 2016:  Zero also the kV SP!
+  field(DO3,    "0.001")
+  field(LNK3,   "$(S1){$(D1)}E:SP.OROC PP")
+  field(DLY3,   "0.1")
+  field(DO4,    "0")
+  field(LNK4,   "$(S1){$(D1)}E:Fb-SP.OROC PP")
+  field(DLY4,   "0.1")
+# APR.19, 2016:  Zero also the kV SP!
+  field(DO5,    "0")
+  field(LNK5,   "$(S1){$(D1)}E:SP.OROC PP")
+  field(DLY5,   "0.1")
+  field(FLNK,   "$(S1){$(D1)}Cmd:Open2")
+}
+
+record(seq,     "$(S1){$(D1)}Cmd:Open2") {
+# APR.19, 2016:  Zero also the kV SP!
+  field(DO1,    "0")
+  field(LNK1,   "$(S1){$(D1)}E:SP PP")
+# Sets the amplitude setpoint to zero
+# APR.19, 2016:  Zero the kV SP!)
+  field(DO2,    "0")
+  field(LNK2,   "$(S1){$(D1)}E:SP PP")
+# Sets the amplitude OROC back to 0.05
+#  field(DO3,    "0.05")
+#  field(LNK3,   "$(S1){$(D1)}E:Fb-SP.OROC PP")
+#  field(DLY3,   "0.1")
+# Sets the kV OROC back to 100
+  field(DO4,    "100")
+  field(LNK4,   "$(S1){$(D1)}E:SP.OROC PP")
+#-------------------------------------------------------
+# APR. 27, 2016, B. Holub, should also zero the FF
+# setpoints: set equation to CW = C
+#-------------------------------------------------------
+#  field(DO5,    "0")
+#  field(LNK5,   "$(S1){$(D1)-$(TBL1)}E:Fb-SP PP")
+  field(DO6,    "67")
+  field(LNK6,   "$(S1){$(D1)-$(TBL1)}E:Eq2 PP")
+  field(DO7,    "1")
+  field(LNK7,   "$(S1){$(D1)-$(TBL1)}Cnt:Eq-Sel PP")
+  field(DO8,    "1")
+  field(LNK8,   "$(S1){$(D1)-$(TBL1)}Cmd:Apply PP")
+}
+
+record(calcout, "$(S1){$(D1)}DI:B12Ep20") {
+# Previously PPS
+  field(DESC,   "Vacuum trip:")
+  field(CALC,   "(A & B)?1:0")
+  field(INPA,   "$(S1){$(D1)}DI:Ep20-I")
+  field(INPB,   "4096")
+  field(HIHI,   "0.9")
+  field(HHSV,   "MAJOR")
+  field(FLNK,   "$(S1){$(D1)}DI:B13Ep20")
+}
+
+record(calcout, "$(S1){$(D1)}DI:B13Ep20") {
+  field(DESC,   "Cavity: Undervoltage:")
+  field(CALC,   "(A & B)?1:0")
+  field(INPA,   "$(S1){$(D1)}DI:Ep20-I")
+  field(INPB,   "8192")
+  field(HIHI,   "0.9")
+  field(HHSV,   "MAJOR")
+  field(OUT,    "$(S1){$(D1)-$(SD2)}Lim:ELow PP")
+}
+
+record(bo,      "$(S1){$(D1)-$(SD2)}Lim:ELow") {
+  field(DESC,   "Cav u/v:")
+  field(ZNAM,   "No")
+  field(ONAM,   "Yes")
+  field(FLNK,   "$(S1){$(D1)}DI:B14Ep20")
+}
+
+record(calcout, "$(S1){$(D1)}DI:B14Ep20") {
+  field(DESC,   "Cavity: Forward undervoltage:")
+  field(CALC,   "(A & B)?1:0")
+  field(INPA,   "$(S1){$(D1)}DI:Ep20-I")
+  field(INPB,   "16384")
+  field(OUT,    "$(S1){$(D1)-$(SD3)}Lim:ELow PP")
+}
+
+record(bo,      "$(S1){$(D1)-$(SD3)}Lim:ELow") {
+  field(DESC,   "Fwd pwr u/v:")
+  field(ZNAM,   "No")
+  field(ONAM,   "Yes")
+  field(FLNK,   "$(S1){$(D1)}DI:B15Ep20")
+}
+
+record(calcout, "$(S1){$(D1)}DI:B15Ep20") {
+  field(DESC,   "Alternate SP")
+  field(CALC,   "(A & B)?1:0")
+  field(INPA,   "$(S1){$(D1)}DI:Ep20-I")
+  field(INPB,   "32768")
+  field(OUT,    "$(S1){$(D1)-$(SD1)}DI:SP-RB PP")
+}
+
+record(bo,      "$(S1){$(D1)-$(SD1)}DI:SP-RB") {
+  field(DESC,   "Alternate SP:")
+  field(ZNAM,   "Off")
+  field(ONAM,   "On")
+}
+
+record(longin,  "$(S1){$(D1)}DI:Ep21-I") {
+  field(DTYP,   "asynInt32")
+  field(DESC,   "WireOut Ep 21, MUX:")
+  field(INP ,   "@asyn($(PORT),0)WireOut EP21")
+  field(SCAN,   "I/O Intr")
+}
+
+record(longin,  "$(S1){$(D1)}DI:Ep22-I") {
+  field(DTYP,   "asynInt32")
+  field(DESC,   "WireOut Ep 22, ffImon:")
+  field(INP ,   "@asyn($(PORT),0)WireOut EP22")
+  field(SCAN,   "I/O Intr")
+  field(FLNK,   "$(S1){$(D1)}Val:$(TBL1)I-I")
+}
+
+#========================================
+
+record(waveform, "$(S1){$(D1)}Val:$(TBL1)I-I") {
+  field(DESC,    "ffImon")
+  field(FTVL,    "DOUBLE")
+  field(INP,     "$(S1){$(D1)}DI:Ep22-I")
+  field(NELM,    "1")
+  field(FLNK,    "$(S1){$(D1)}Val:$(TBL1)IQ-Calc")
+}
+
+#========================================
+
+record(longin,   "$(S1){$(D1)}DI:Ep23-I") {
+  field(DTYP,    "asynInt32")
+  field(DESC,    "WireOut Ep 23, ffQmon:")
+  field(INP ,    "@asyn($(PORT),0)WireOut EP23")
+  field(SCAN,    "I/O Intr")
+  field(FLNK,    "$(S1){$(D1)}Val:$(TBL1)Q-I")
+}
+
+#========================================
+
+record(waveform, "$(S1){$(D1)}Val:$(TBL1)Q-I") {
+  field(DESC,    "ffQmon")
+  field(FTVL,    "DOUBLE")
+  field(INP,     "$(S1){$(D1)}DI:Ep23-I")
+  field(NELM,    "1")
+  field(FLNK,    "$(S1){$(D1)}Val:$(TBL1)IQ-Calc")
+}
+
+#========================================
+
+record(aSub,     "$(S1){$(D1)}Val:$(TBL1)IQ-Calc") {
+  field(SNAM,    "IQ2AP")
+  field(FTA ,    "DOUBLE")
+  field(FTB ,    "DOUBLE")
+  field(FTVA ,   "DOUBLE")
+  field(FTVB ,   "DOUBLE")
+  field(NOA ,    "1")
+  field(NOB ,    "1")
+  field(NOVA,    "1")
+  field(NOVB,    "1")
+  field(INPA,    "$(S1){$(D1)}Val:$(TBL1)I-I MSS")
+  field(INPB,    "$(S1){$(D1)}Val:$(TBL1)Q-I MSS")
+  field(OUTA,    "$(S1){$(D1)}E:$(TBL1)-I")
+  field(OUTB,    "$(S1){$(D1)}Phs:$(TBL1)-I")
+  field(FLNK,    "$(S1){$(D1)}E:$(TBL1)-I")
+}
+
+record(waveform, "$(S1){$(D1)}E:$(TBL1)-I") {
+  field(DESC,    "FF SP Ampl RB:")
+  field(FTVL,    "DOUBLE")
+  field(NELM,    "1")
+  field(EGU,     "[0..1]")
+  field(FLNK,    "$(S1){$(D1)}Phs:$(TBL1)-I")
+}
+
+record(waveform, "$(S1){$(D1)}Phs:$(TBL1)-I") {
+  field(DESC,    "Phase 1")
+  field(FTVL,    "DOUBLE")
+  field(NELM,    "1")
+  field(PREC,    "1")
+  field(EGU,     "deg")
+}
+
+#========================================
+
+record(longin, "$(S1){$(D1)}DI:Ep24-I") {
+  field(DTYP, "asynInt32")
+  field(DESC, "WireOut Ep 24, r1Imon:")
+  field(INP , "@asyn($(PORT),0)WireOut EP24")
+  field(SCAN, "I/O Intr")
+}
+
+record(longin, "$(S1){$(D1)}DI:Ep25-I") {
+  field(DTYP, "asynInt32")
+  field(DESC, "WireOut Ep 25, r1Qmon:")
+  field(INP , "@asyn($(PORT),0)WireOut EP25")
+  field(SCAN, "I/O Intr")
+}
+
+record(longin, "$(S1){$(D1)}DI:Ep26-I") {
+  field(DTYP, "asynInt32")
+  field(DESC, "WireOut Ep 26, dbImon:")
+  field(INP , "@asyn($(PORT),0)WireOut EP26")
+  field(SCAN, "I/O Intr")
+}
+
+record(longin, "$(S1){$(D1)}DI:Ep27-I") {
+  field(DTYP, "asynInt32")
+  field(DESC, "WireOut Ep 27, dbQmon:")
+  field(INP , "@asyn($(PORT),0)WireOut EP27")
+  field(SCAN, "I/O Intr")
+}
+
+record(longin, "$(S1){$(D1)}DI:Ep28-I") {
+  field(DTYP,  "asynInt32")
+  field(DESC,  "WireOut Ep 28, Phase err:")
+  field(INP ,  "@asyn($(PORT),0)WireOut EP28")
+  field(SCAN,  "I/O Intr")
+  field(FLNK,  "$(S1){$(D1)}Err:Phs1-Calc")
+}
+
+record(calc,   "$(S1){$(D1)}Err:Phs1-Calc") {
+  field(DESC,  "Tuner phs err calc:")
+  field(CALC,  "(A<B)?A:(A-C)")
+  field(INPA,  "$(S1){$(D1)}DI:Ep28-I")
+  field(INPB,  "+8192")
+  field(INPC,  "+16384")
+  field(FLNK,  "$(S1){$(D1)}Err:Phs2-Calc")
+}
+
+record(calcout,"$(S1){$(D1)}Err:Phs2-Calc") {
+  field(DESC,  "Tuner phs err calc:")
+  field(CALC,  "A*B/C")
+  field(INPA,  "$(S1){$(D1)}Err:Phs1-Calc")
+  field(INPB,  "360.0")
+  field(INPC,  "16384.0")
+  field(OUT,   "$(S1){$(D1)}Err:Phs PP")
+}
+
+record(ao,      "$(S1){$(D1)}Err:Phs") {
+  field(DESC,   "Tuner phase error:")
+  field(EGU,    "deg")
+  field(PREC,   "1")
+}
+
+record(longin,  "$(S1){$(D1)}DI:Ep29-I") {
+# Jan. 26, 2017 - B. Holub will use the EP as bmQmon
+  field(DTYP,   "asynInt32")
+  field(DESC,   "WireOut Ep 29, Tuner posn:")
+  field(INP ,   "@asyn($(PORT),0)WireOut EP29")
+  field(SCAN,   "I/O Intr")
+}
+record(longin,  "$(S1){$(D1)}DI:Ep2A-I") {
+  field(DTYP,   "asynInt32")
+  field(DESC,   "WireOut Ep 2A, TSWord0:")
+  field(INP ,   "@asyn($(PORT),0)WireOut EP2a")
+  field(SCAN,   "I/O Intr")
+}
+
+record(longin,  "$(S1){$(D1)}DI:Ep2B-I") {
+  field(DTYP,   "asynInt32")
+  field(DESC,   "WireOut Ep 2B, TSWord1:")
+  field(INP ,   "@asyn($(PORT),0)WireOut EP2b")
+  field(SCAN,   "I/O Intr")
+}
+
+record(longin,  "$(S1){$(D1)}DI:Ep2C-I") {
+  field(DTYP,   "asynInt32")
+  field(DESC,   "WireOut Ep 2C, TSWord2:")
+  field(INP ,   "@asyn($(PORT),0)WireOut EP2c")
+  field(SCAN,   "I/O Intr")
+}
+
+record(longin,  "$(S1){$(D1)}DI:Ep2D-I") {
+  field(DTYP,   "asynInt32")
+  field(DESC,   "WireOut Ep 2D, SDRAM last:")
+  field(INP ,   "@asyn($(PORT),0)WireOut EP2d")
+  field(SCAN,   "I/O Intr")
+# field(FLNK,   "$(S1){$(D1)-$(SD6)}Pos:P1")
+}
+
+record(longin,  "$(S1){$(D1)}DI:Ep2E-I") {
+# Jan. 26, 2017 - B. Holub will use the EP as bmImon
+  field(DTYP,   "asynInt32")
+  field(DESC,   "WireOut Ep 2E, Vacuum:")
+  field(INP ,   "@asyn($(PORT),0)WireOut EP2e")
+  field(SCAN,   "I/O Intr")
+}
+
+record(longin,  "$(S1){$(D1)}DI:Ep2F-I") {
+  field(DTYP,   "asynInt32")
+  field(DESC,   "WireOut Ep 2F:")
+  field(INP ,   "@asyn($(PORT),0)WireOut EP2f")
+  field(SCAN,   "I/O Intr")
+  field(FLNK,   "$(S1){$(D1)}Dsbl:FF-Calc")
+}
+
+#========================================
+# AUG. 29, 2016: DI:Ep2F-I = Limiter Active
+# - should turn off FF
+#
+# MAY 22, 2017, B. Holub: Use Limiter Active && !RF inhibit
+# bit for Auto-Re-Arming of the circular buffer
+# for eQuench testing
+#
+# MAY 24, 2017, B. Holub: Disable Re-Arming for 
+# time being: DISA = 1
+#
+# MAY 31, 2017, B. Holub: Disabling this record
+# also disabled First Fault Logic - Restore
+# the original functionality
+#
+record(calcout,  "$(S1){$(D1)}Dsbl:FF-Calc") {
+  field(DESC,    "Limiter disables FF:")
+###  field(DESC,    "Re-Arm Circ. Buf.")
+  field(CALC,    "(A&0x01)?0:B")
+###  field(CALC,    "((A&0x01)&&!B)?1:0")
+  field(INPA,    "$(S1){$(D1)}DI:Ep2F-I")
+###  field(INPB,    "$(S1){$(D1)}DI:B05Ep20")
+  field(INPB,    "$(S1){$(D1)-$(TBL1)}Enbl:Cmd")
+  field(OOPT,    "When Zero")
+  field(OUT,     "$(S1){$(D1)-$(TBL1)}Enbl:Cmd PP")
+##  field(FLNK,    "$(S1){$(D1)-$(SD7)}Sts:Armed-Calc")
+##
+###  field(OOPT,    "Transition To Non-zero")
+###  field(ODLY,    "15")
+###  field(OUT,     "$(S1){$(D1)-$(SD6)}State:Arm00 PP")
+###  field(DISA,    "1")
+  field(FLNK,    "$(S1){$(D1)}Flt:1st-Calc")
+}
+
+#========================================
+# First Fault Logic
+#
+# NOV. 22, 2016: DI:Ep2F-I bits 6, 7, 8, 9
+# indicate code for First Fault:
+# 1 = PPS; 2 = EQUENCH; 3 = LDP; 4 = RPTH; 5 = AVAGO2
+#
+
+record(calcout, "$(S1){$(D1)}Flt:1st-Calc") {
+  field(DESC,   "First Fault bits")
+  field(CALC,   "(A>>6)&B")
+  field(INPA,   "$(S1){$(D1)}DI:Ep2F-I")
+  field(INPB,   "15")
+  field(OUT,    "$(S1){$(D1)}Flt:1st-I PP")
+}
+
+record(longin,  "$(S1){$(D1)}Flt:1st-I") {
+  field(DESC,   "First Fault Code")
+  field(FLNK,   "$(S1){$(D1)}Flt:PPS-Calc")
+}
+#========================================
+# PPS
+#========================================
+record(calcout, "$(S1){$(D1)}Flt:PPS-Calc") {
+  field(CALC,   "A=B?1:0")
+  field(INPA,   "$(S1){$(D1)}Flt:1st-I")
+  field(INPB,   "1")
+  field(OUT,    "$(S1){$(D1)}Flt:PPS PP")
+}
+
+record(bi,      "$(S1){$(D1)}Flt:PPS") {
+  field(DESC,   "PPS")
+  field(ZNAM,   "OK")
+  field(ZSV,    "NO_ALARM")
+  field(ONAM,   "FAULT")
+  field(OSV,    "MAJOR")
+  field(FLNK,   "$(S1){$(D1)}Flt:Eqch-Calc")
+}
+
+#========================================
+# EQUENCH
+#========================================
+record(calcout, "$(S1){$(D1)}Flt:Eqch-Calc") {
+  field(CALC,   "A=B?1:0")
+  field(INPA,   "$(S1){$(D1)}Flt:1st-I")
+  field(INPB,   "2")
+  field(OUT,    "$(S1){$(D1)}Flt:Eqch PP")
+}
+
+record(bi,      "$(S1){$(D1)}Flt:Eqch") {
+  field(DESC,   "EQUENCH")
+  field(ZNAM,   "OK")
+  field(ZSV,    "NO_ALARM")
+  field(ONAM,   "FAULT")
+  field(OSV,    "MAJOR")
+  field(FLNK,   "$(S1){$(D1)}Flt:LDP-Calc")
+}
+
+#========================================
+# LDP
+#========================================
+record(calcout, "$(S1){$(D1)}Flt:LDP-Calc") {
+  field(CALC,   "A=B?1:0")
+  field(INPA,   "$(S1){$(D1)}Flt:1st-I")
+  field(INPB,   "3")
+  field(OUT,    "$(S1){$(D1)}Flt:LDP PP")
+}
+
+record(bi,      "$(S1){$(D1)}Flt:LDP") {
+  field(DESC,   "LDP")
+  field(ZNAM,   "OK")
+  field(ZSV,    "NO_ALARM")
+  field(ONAM,   "FAULT")
+  field(OSV,    "MAJOR")
+  field(FLNK,   "$(S1){$(D1)}Flt:Sts-Calc")
+}
+#****************************************
+# DEC. 14, 2016: B. Holub added combined
+# XMTR NOT RDY || Flt:LDP
+#****************************************
+record(calcout, "$(S1){$(D1)}Flt:Sts-Calc") {
+  field(CALC,   "(!A||B)?1:0")
+  field(INPA,   "$(S1){$(RD)}Rdy:Sts CPP")
+  field(INPB,   "$(S1){$(D1)}Flt:LDP")
+  field(OUT,    "$(S1){$(D1)}Flt:Sts PP")
+}
+
+record(bi,      "$(S1){$(D1)}Flt:Sts") {
+  field(DESC,   "TX NOT IN RF")
+  field(ZNAM,   "OK")
+  field(ZSV,    "NO_ALARM")
+  field(ONAM,   "FAULT")
+  field(OSV,    "MAJOR")
+  field(FLNK,   "$(S1){$(D1)}Flt:RPTH-Calc")
+}
+#========================================
+# RPTH
+#========================================
+record(calcout, "$(S1){$(D1)}Flt:RPTH-Calc") {
+  field(CALC,   "A=B?1:0")
+  field(INPA,   "$(S1){$(D1)}Flt:1st-I")
+  field(INPB,   "4")
+  field(OUT,    "$(S1){$(D1)}Flt:RPTH PP")
+}
+
+record(bi,      "$(S1){$(D1)}Flt:RPTH") {
+  field(DESC,   "RPTH")
+  field(ZNAM,   "OK")
+  field(ZSV,    "NO_ALARM")
+  field(ONAM,   "FAULT")
+  field(OSV,    "MAJOR")
+  field(FLNK,   "$(S1){$(D1)}Flt:AVAGO2-Calc")
+}
+
+#========================================
+# AVAGO2
+#========================================
+record(calcout, "$(S1){$(D1)}Flt:AVAGO2-Calc") {
+  field(CALC,   "A=B?1:0")
+  field(INPA,   "$(S1){$(D1)}Flt:1st-I")
+  field(INPB,   "5")
+  field(OUT,    "$(S1){$(D1)}Flt:AVAGO2 PP")
+}
+
+record(bi,      "$(S1){$(D1)}Flt:AVAGO2") {
+  field(DESC,   "AVAGO2")
+  field(ZNAM,   "OK")
+  field(ZSV,    "NO_ALARM")
+  field(ONAM,   "FAULT")
+  field(OSV,    "MAJOR")
+# field(FLNK,   "$(S1){$(D1)-$(SD7)}Sts:Armed-Calc")
+}
+#========================================
+#========================================
+
+record(longin,  "$(S1){$(D1)}DI:Ep30-I") {
+  field(DTYP,   "asynInt32")
+  field(DESC,   "WireOut Ep 30, cavImon:")
+  field(INP ,   "@asyn($(PORT),0)WireOut EP30")
+  field(SCAN,   "I/O Intr")
+  field(FLNK,   "$(S1){$(D1)-$(SD2)}Val:IWut-I")
+}
+
+record(waveform,"$(S1){$(D1)-$(SD2)}Val:IWut-I") {
+  field(DESC,   "cavImon")
+  field(FTVL,   "DOUBLE")
+  field(INP,    "$(S1){$(D1)}DI:Ep30-I")
+  field(NELM,   "1")
+  field(FLNK,   "$(S1){$(D1)-$(SD2)}Val:IQWut-Calc")
+}
+
+#========================================
+
+record(longin,  "$(S1){$(D1)}DI:Ep31-I") {
+  field(DTYP,   "asynInt32")
+  field(DESC,   "WireOut Ep 31, cavQmon:")
+  field(INP ,   "@asyn($(PORT),0)WireOut EP31")
+  field(SCAN,   "I/O Intr")
+  field(FLNK,   "$(S1){$(D1)-$(SD2)}Val:QWut-I")
+}
+
+record(waveform,"$(S1){$(D1)-$(SD2)}Val:QWut-I") {
+  field(DESC,   "cavQmon")
+  field(FTVL,   "DOUBLE")
+  field(INP,    "$(S1){$(D1)}DI:Ep31-I")
+  field(NELM,   "1")
+  field(FLNK,   "$(S1){$(D1)-$(SD2)}Val:IQWut-Calc")
+}
+
+#========================================
+
+record(aSub,    "$(S1){$(D1)-$(SD2)}Val:IQWut-Calc") {
+  field(SNAM,   "IQ2AP")
+  field(FTA ,   "DOUBLE")
+  field(FTB ,   "DOUBLE")
+  field(FTVA ,  "DOUBLE")
+  field(FTVB ,  "DOUBLE")
+  field(NOA ,   "1")
+  field(NOB ,   "1")
+  field(NOVA,   "1")
+  field(NOVB,   "1")
+  field(INPA,   "$(S1){$(D1)-$(SD2)}Val:IWut-I MSS")
+  field(INPB,   "$(S1){$(D1)-$(SD2)}Val:QWut-I MSS")
+  field(OUTA,   "$(S1){$(D1)-$(SD2)}E:IWut MSS")
+  field(OUTB,   "$(S1){$(D1)-$(SD2)}Phs:IWut MSS")
+  field(FLNK,   "$(S1){$(D1)-$(SD2)}E:IWut")
+}
+
+record(waveform,"$(S1){$(D1)-$(SD2)}E:IWut") {
+  field(DESC,   "Cav Amplitude:")
+  field(FTVL,   "DOUBLE")
+  field(NELM,   "1")
+  field(FLNK,   "$(S1){$(D1)-$(SD2)}E:I-Buf")
+}
+
+record(subArray,"$(S1){$(D1)-$(SD2)}E:I-Buf") {
+  field(FTVL,   "DOUBLE")
+  field(MALM,   "1")
+  field(NELM,   "1")
+  field(INP,    "$(S1){$(D1)-$(SD2)}E:IWut")
+  field(FLNK,   "$(S1){$(D1)-$(SD2)}E:N-I")
+}
+
+record(calcout, "$(S1){$(D1)-$(SD2)}E:N-I") {
+  field(DESC,   "Cav Amp Normalized:")
+  field(CALC,   "(A/B)")
+  field(INPA,   "$(S1){$(D1)-$(SD2)}E:I-Buf")
+  field(INPB,   "32767.0")
+  field(FLNK,   "$(S1){$(D1)-$(SD2)}Phs:IWut")
+}
+
+record(waveform,"$(S1){$(D1)-$(SD2)}Phs:IWut") {
+  field(DESC,   "Phase 2")
+  field(FTVL,   "DOUBLE")
+  field(NELM,   "1")
+  field(PREC,   "1")
+  field(EGU,    "deg")
+  field(FLNK,   "$(S1){$(D1)}Phs:Rot1-Calc")
+}
+
+#========================================
+# New OpalKelly, XEM7010 requires Phs1 - Phs2 + 90
+# DEC. 18, 2019
+# But regular XEM3010 requires Phs1 - Phs2 -90
+#========================================
+record(calc,    "$(S1){$(D1)}Phs:Rot1-Calc") {
+  field(DESC,   "Phs1 - Phs2 - 90")
+  field(CALC,   "A-B+C")
+  field(PREC,   "1")
+  field(EGU,    "deg")
+  field(INPA,   "$(S1){$(D1)}Phs:$(TBL1)-I")
+  field(INPB,   "$(S1){$(D1)-$(SD2)}Phs:IWut")
+# field(INPC,   "90.0")
+# field(INPC,   "270.0")
+  field(INPC,   "-90.0")
+  field(FLNK,   "$(S1){$(D1)}Phs:Rot2-Calc")
+}
+
+record(calcout, "$(S1){$(D1)}Phs:Rot2-Calc") {
+# field(DESC,   "Phs1 - Phs2 - 90")
+  field(DESC,   "New setpoint:")
+  field(CALC,   "E:=A; E>F?(E-G):(E<-F?(E+G):E)")
+  field(INPA,   "$(S1){$(D1)}Phs:Rot1-Calc MSS")
+  field(INPE,   "")
+  field(INPF,   "180")
+  field(INPG,   "360")
+  field(EGU ,   "deg")
+  field(PREC,   "1")
+  field(FLNK,   "$(S1){$(D1)}Phs:Rot3-Calc")
+}
+
+record(calcout, "$(S1){$(D1)}Phs:Rot3-Calc") {
+  field(DESC,   "(PhaseRot/360+0.5)*2*PI-PI:")
+  field(CALC,   "(A/360.0+0.5)*2*PI-PI")
+  field(EGU,    "rad")
+  field(INPA,   "$(S1){$(D1)}Phs:Rot2-Calc")
+  field(OUT,    "$(S1){$(D1)}Phs:Rot2 PP")
+}
+
+record(ao,      "$(S1){$(D1)}Phs:Rot2") {
+}
+
+#++++++++++++++++++++++++++++++++++++++++
+
+record(longin,  "$(S1){$(D1)}DI:Ep32-I") {
+  field(DTYP,   "asynInt32")
+  field(DESC,   "WireOut Ep 32, fwdImon:")
+  field(INP ,   "@asyn($(PORT),0)WireOut EP32")
+  field(SCAN,   "I/O Intr")
+  field(FLNK,   "$(S1){$(D1)-$(SD3)}Val:IWut-I")
+}
+
+record(waveform,"$(S1){$(D1)-$(SD3)}Val:IWut-I") {
+  field(DESC,   "fwdImon")
+  field(FTVL,   "DOUBLE")
+  field(INP,    "$(S1){$(D1)}DI:Ep32-I")
+  field(NELM,   "1")
+  field(FLNK,   "$(S1){$(D1)-$(SD3)}Val:IQWut-Calc")
+}
+
+record(longin, "$(S1){$(D1)}DI:Ep33-I") {
+  field(DTYP,  "asynInt32")
+  field(DESC,  "WireOut Ep 33, fwdQmon:")
+  field(INP ,  "@asyn($(PORT),0)WireOut EP33")
+  field(SCAN,  "I/O Intr")
+  field(FLNK,   "$(S1){$(D1)-$(SD3)}Val:QWut-I")
+}
+
+record(waveform,"$(S1){$(D1)-$(SD3)}Val:QWut-I") {
+  field(DESC,   "fwdQmon")
+  field(FTVL,   "DOUBLE")
+  field(INP,    "$(S1){$(D1)}DI:Ep33-I")
+  field(NELM,   "1")
+  field(FLNK,   "$(S1){$(D1)-$(SD3)}Val:IQWut-Calc")
+}
+
+record(aSub,    "$(S1){$(D1)-$(SD3)}Val:IQWut-Calc") {
+  field(SNAM,   "IQ2AP")
+  field(FTA ,   "DOUBLE")
+  field(FTB ,   "DOUBLE")
+  field(FTVA ,  "DOUBLE")
+  field(FTVB ,  "DOUBLE")
+  field(NOA ,   "1")
+  field(NOB ,   "1")
+  field(NOVA,   "1")
+  field(NOVB,   "1")
+  field(INPA,   "$(S1){$(D1)-$(SD3)}Val:IWut-I MSS")
+  field(INPB,   "$(S1){$(D1)-$(SD3)}Val:QWut-I MSS")
+  field(OUTA,   "$(S1){$(D1)-$(SD3)}E:IWut MSS")
+  field(OUTB,   "$(S1){$(D1)-$(SD3)}Phs:IWut MSS")
+  field(FLNK,   "$(S1){$(D1)-$(SD3)}E:IWut")
+}
+
+record(waveform,"$(S1){$(D1)-$(SD3)}E:IWut") {
+  field(DESC,   "PFwd amplitude:")
+  field(FTVL,   "DOUBLE")
+  field(NELM,   "1")
+  field(FLNK,   "$(S1){$(D1)-$(SD3)}E:I-Buf")
+}
+
+record(subArray,"$(S1){$(D1)-$(SD3)}E:I-Buf") {
+  field(FTVL,   "DOUBLE")
+  field(MALM,   "1")
+  field(NELM,   "1")
+  field(INP,    "$(S1){$(D1)-$(SD3)}E:IWut")
+  field(FLNK,   "$(S1){$(D1)-$(SD3)}E:N-I")
+}
+
+record(calcout, "$(S1){$(D1)-$(SD3)}E:N-I") {
+  field(DESC,   "PFwd normalized:")
+  field(CALC,   "(A/B)")
+  field(INPA,   "$(S1){$(D1)-$(SD3)}E:I-Buf")
+  field(INPB,   "32767.0")
+  field(FLNK,   "$(S1){$(D1)-$(SD3)}Phs:IWut")
+}
+
+record(waveform,"$(S1){$(D1)-$(SD3)}Phs:IWut") {
+  field(DESC,   "PFwd phase:")
+  field(FTVL,   "DOUBLE")
+  field(NELM,   "1")
+  field(PREC,   "1")
+  field(EGU,    "deg")
+}
+
+#++++++++++++++++++++++++++++++++++++++++
+#----------------------------------------
+
+record(longin,  "$(S1){$(D1)}DI:Ep34-I") {
+  field(DTYP,   "asynInt32")
+  field(DESC,   "WireOut Ep 34, revImon:")
+  field(INP ,   "@asyn($(PORT),0)WireOut EP34")
+  field(SCAN,   "I/O Intr")
+  field(FLNK,   "$(S1){$(D1)-$(SD4)}Val:IWut-I")
+}
+
+record(waveform,"$(S1){$(D1)-$(SD4)}Val:IWut-I") {
+  field(DESC,   "revImon")
+  field(FTVL,   "DOUBLE")
+  field(INP,    "$(S1){$(D1)}DI:Ep34-I")
+  field(NELM,   "1")
+  field(FLNK,   "$(S1){$(D1)-$(SD4)}Val:IQWut-Calc")
+}
+
+record(longin, "$(S1){$(D1)}DI:Ep35-I") {
+  field(DTYP,  "asynInt32")
+  field(DESC,  "WireOut Ep 35, revQmon:")
+  field(INP ,  "@asyn($(PORT),0)WireOut EP35")
+  field(SCAN,  "I/O Intr")
+  field(FLNK,  "$(S1){$(D1)-$(SD4)}Val:QWut-I")
+}
+
+record(waveform,"$(S1){$(D1)-$(SD4)}Val:QWut-I") {
+  field(DESC,   "revQmon")
+  field(FTVL,   "DOUBLE")
+  field(INP,    "$(S1){$(D1)}DI:Ep35-I")
+  field(NELM,   "1")
+  field(FLNK,   "$(S1){$(D1)-$(SD4)}Val:IQWut-Calc")
+}
+
+record(aSub,    "$(S1){$(D1)-$(SD4)}Val:IQWut-Calc") {
+  field(SNAM,   "IQ2AP")
+  field(FTA ,   "DOUBLE")
+  field(FTB ,   "DOUBLE")
+  field(FTVA ,  "DOUBLE")
+  field(FTVB ,  "DOUBLE")
+  field(NOA ,   "1")
+  field(NOB ,   "1")
+  field(NOVA,   "1")
+  field(NOVB,   "1")
+  field(INPA,   "$(S1){$(D1)-$(SD4)}Val:IWut-I MSS")
+  field(INPB,   "$(S1){$(D1)-$(SD4)}Val:QWut-I MSS")
+  field(OUTA,   "$(S1){$(D1)-$(SD4)}E:IWut MSS")
+  field(OUTB,   "$(S1){$(D1)-$(SD4)}Phs:IWut MSS")
+  field(FLNK,   "$(S1){$(D1)-$(SD4)}E:IWut")
+}
+
+record(waveform,"$(S1){$(D1)-$(SD4)}E:IWut") {
+  field(DESC,   "PRfl amplitude:")
+  field(FTVL,   "DOUBLE")
+  field(NELM,   "1")
+  field(FLNK,   "$(S1){$(D1)-$(SD4)}E:I-Buf")
+}
+
+record(subArray,"$(S1){$(D1)-$(SD4)}E:I-Buf") {
+  field(FTVL,   "DOUBLE")
+  field(MALM,   "1")
+  field(NELM,   "1")
+  field(INP,    "$(S1){$(D1)-$(SD4)}E:IWut")
+  field(FLNK,   "$(S1){$(D1)-$(SD4)}E:N-I")
+}
+
+record(calcout, "$(S1){$(D1)-$(SD4)}E:N-I") {
+  field(DESC,   "PRfl normalized:")
+  field(CALC,   "(A/B)")
+  field(INPA,   "$(S1){$(D1)-$(SD4)}E:I-Buf")
+  field(INPB,   "32767.0")
+  field(FLNK,   "$(S1){$(D1)-$(SD4)}Phs:IWut")
+}
+
+record(waveform,"$(S1){$(D1)-$(SD4)}Phs:IWut") {
+  field(DESC,   "PRfl phase:")
+  field(FTVL,   "DOUBLE")
+  field(NELM,   "1")
+  field(PREC,   "1")
+  field(EGU,    "deg")
+}
+
+#----------------------------------------
+
+record(longin,  "$(S1){$(D1)}DI:Ep36-I") {
+  field(DTYP,   "asynInt32")
+  field(DESC,   "WireOut Ep 36, refImon:")
+  field(INP ,   "@asyn($(PORT),0)WireOut EP36")
+  field(SCAN,   "I/O Intr")
+  field(FLNK,   "$(S1){$(D1)-$(SD0)}Val:IWut-I")
+}
+
+record(waveform,"$(S1){$(D1)-$(SD0)}Val:IWut-I") {
+  field(DESC,   "refImon")
+  field(FTVL,   "DOUBLE")
+  field(INP,    "$(S1){$(D1)}DI:Ep36-I")
+  field(NELM,   "1")
+  field(FLNK,   "$(S1){$(D1)}DI:Ep37-I")
+}
+
+record(longin,  "$(S1){$(D1)}DI:Ep37-I") {
+  field(DTYP,   "asynInt32")
+  field(DESC,   "WireOut Ep 37, refQmon:")
+  field(INP ,   "@asyn($(PORT),0)WireOut EP37")
+  field(SCAN,   "I/O Intr")
+  field(FLNK,   "$(S1){$(D1)-$(SD0)}Val:QWut-I")
+}
+
+record(waveform,"$(S1){$(D1)-$(SD0)}Val:QWut-I") {
+  field(DESC,   "refQmon")
+  field(FTVL,   "DOUBLE")
+  field(INP,    "$(S1){$(D1)}DI:Ep37-I")
+  field(NELM,   "1")
+  field(FLNK,   "$(S1){$(D1)-$(SD0)}Val:IQWut-Calc")
+}
+
+record(acalcout, "$(S1){$(D1)-$(SD0)}Val:IQWut-Calc") {
+  field(CALC,    "AA+(BB>>1)")
+  field(INAA,    "$(S1){$(D1)-$(SD0)}Val:IWut-I")
+  field(INBB,    "$(S1){$(D1)-$(SD0)}Val:QWut-I")
+  field(NELM,    "2")
+  field(NUSE,    "2")
+  field(OUT,     "$(S1){$(D1)-$(SD0)}Val:IQWut-I PP")
+}
+
+record(waveform, "$(S1){$(D1)-$(SD0)}Val:IQWut-I") {
+  field(FTVL,    "DOUBLE")
+  field(NELM,    "2")
+  field(FLNK,    "$(S1){$(D1)}DI:Ep38-I")
+}
+
+#----------------------------------------
+record(longin, "$(S1){$(D1)}DI:Ep38-I") {
+  field(DTYP,  "asynInt32")
+  field(DESC,  "WireOut Ep 38, fbImon:")
+  field(INP ,  "@asyn($(PORT),0)WireOut EP38")
+  field(SCAN,  "I/O Intr")
+  field(FLNK,  "$(S1){$(D1)}DI:Ep39-I")
+}
+
+record(longin, "$(S1){$(D1)}DI:Ep39-I") {
+  field(DTYP,  "asynInt32")
+  field(DESC,  "WireOut Ep 39, fbQmon:")
+  field(INP ,  "@asyn($(PORT),0)WireOut EP39")
+  field(SCAN,  "I/O Intr")
+  field(FLNK,  "$(S1){$(D1)}DI:Ep3A-I")
+}
+
+record(longin, "$(S1){$(D1)}DI:Ep3A-I") {
+  field(DTYP,  "asynInt32")
+  field(DESC,  "WireOut Ep 3A, Dallas:")
+  field(INP ,  "@asyn($(PORT),0)WireOut EP3a")
+# field(SCAN,  "I/O Intr")
+  field(FLNK,  "$(S1){$(D1)}DI:Ep3B-I")
+}
+
+record(longin, "$(S1){$(D1)}DI:Ep3B-I") {
+  field(DTYP,  "asynInt32")
+  field(DESC,  "WireOut Ep 3B, Dallas:")
+  field(INP ,  "@asyn($(PORT),0)WireOut EP3b")
+# field(SCAN,  "I/O Intr")
+  field(FLNK,  "$(S1){$(D1)}DI:Ep3C-I")
+}
+
+record(longin, "$(S1){$(D1)}DI:Ep3C-I") {
+  field(DTYP,  "asynInt32")
+  field(DESC,  "WireOut Ep 3C, Dallas:")
+  field(INP ,  "@asyn($(PORT),0)WireOut EP3c")
+# field(SCAN,  "I/O Intr")
+  field(FLNK,  "$(S1){$(D1)}DI:Ep3D-I")
+}
+
+record(longin, "$(S1){$(D1)}DI:Ep3D-I") {
+  field(DTYP,  "asynInt32")
+  field(DESC,  "WireOut Ep 3D, Dallas:")
+  field(INP ,  "@asyn($(PORT),0)WireOut EP3d")
+# field(SCAN,  "I/O Intr")
+  field(FLNK,  "$(S1){$(D1)}DI:Ep3E-I")
+}
+
+record(longin, "$(S1){$(D1)}DI:Ep3E-I") {
+  field(DTYP,  "asynInt32")
+  field(DESC,  "WireOut Ep 3e, diImon:")
+  field(INP ,  "@asyn($(PORT),0)WireOut EP3e")
+# field(SCAN,  "I/O Intr")
+  field(FLNK,  "$(S1){$(D1)}DI:Ep3F-I")
+}
+
+record(longin, "$(S1){$(D1)}DI:Ep3F-I") {
+  field(DTYP,  "asynInt32")
+  field(DESC,  "WireOut Ep 3f, diQmon:")
+  field(INP ,  "@asyn($(PORT),0)WireOut EP3f")
+# field(SCAN,  "I/O Intr")
+  field(FLNK,  "$(S1){$(D1)}ID:Brd4-Calc")
+}
+
+record(scalcout, "$(S1){$(D1)}ID:Brd4-Calc") {
+  field(CALC,    "$P('%4x',A)+$P('%04x',B)")
+  field(INPA ,   "$(S1){$(D1)}DI:Ep3B-I")
+  field(INPB,    "$(S1){$(D1)}DI:Ep3A-I")
+  field(OUT,     "$(S1){$(D1)}ID:Build-I PP")
+}
+
+record(stringout,"$(S1){$(D1)}ID:Build-I") {
+  field(FLNK,    "$(S1){$(D1)}ID:Brd4B-Calc")
+}
+
+record(calcout, "$(S1){$(D1)}ID:Brd4B-Calc") {
+  field(CALC,   "A<<16")
+  field(INPA ,  "$(S1){$(D1)}DI:Ep3B-I")
+  field(OUT,    "$(S1){$(D1)}ID:Brd4B-I PP")
+}
+
+record(longout, "$(S1){$(D1)}ID:Brd4B-I") {
+  field(FLNK,    "$(S1){$(D1)}ID:Brd5-Calc")
+}
+
+record(calcout, "$(S1){$(D1)}ID:Brd5-Calc") {
+# field(CALC,   "((A<<16)+B)")
+  field(CALC,   "A|B")
+# field(INPA ,  "$(S1){$(D1)}DI:Ep3B-I")
+  field(INPA ,  "$(S1){$(D1)}ID:Brd4B-I")
+  field(INPB,   "$(S1){$(D1)}DI:Ep3A-I")
+  field(OUT,    "$(S1){$(D1)}ID:BuildN-I PP")
+}
+
+record(longout, "$(S1){$(D1)}ID:BuildN-I") {
+}
+
+record(longin,  "$(S1){$(D1)}DI:Ep60-I") {
+  field(DTYP,   "asynInt32")
+  field(DESC,   "Trig out, Ep 60:")
+  field(INP ,   "@asyn($(PORT),0)TrigOut EP60")
+  field(SCAN,   "I/O Intr")
+}
+
+record(longin,  "$(S1){$(D1)}DI:TrSrc-I") {
+  field(DTYP,   "asynInt32")
+  field(DESC,   "SDRAM Trigger Source:")
+  field(INP ,   "@asyn($(PORT),0)RAM TrigSrc")
+  field(SCAN,   "I/O Intr")
+  field(FLNK,   "$(S1){$(D1)}DO:PhJmp-Calc")
+}
+
+record(calcout, "$(S1){$(D1)}DO:PhJmp-Calc") {
+  field(CALC,   "A")
+  field(INPA,   "$(S1){$(D1)}DI:TrSrc-I")
+  field(OUT,    "$(S1){$(D1)}DO:PhJp1-I PP")
+}
+
+record(bo,      "$(S1){$(D1)}DO:PhJp1-I") {
+  field(DESC,   "Phase jump trigger:")
+  field(ZNAM,   "Idle")
+  field(ONAM,   "Jump")
+  field(HIGH,   "5")
+  field(PINI,   "YES")
+  field(FLNK,   "$(S1){$(D1)}DO:PhJp2-Calc")
+}
+
+record(calcout, "$(S1){$(D1)}DO:PhJp2-Calc") {
+  field(CALC,   "A")
+  field(INPA,   "$(S1){$(D1)}DO:PhJp1-I")
+  field(ODLY,   "5")
+  field(OUT,    "$(S1){$(D1)}DO:PhJp2-I PP")
+}
+
+record(bo,      "$(S1){$(D1)}DO:PhJp2-I") {
+  field(DESC,   "Phase jump trigger:")
+  field(ZNAM,   "Idle")
+  field(ONAM,   "Jump")
+  field(HIGH,   "5")
+  field(PINI,   "YES")
+}
+
+############################################################
+# AUG 14 2015 Ruslan: Use MSB of Ep60 as an indicator that
+# connection has been established with FPGA,
+# and all PVs that were
+# auto-restored should be re-processed to
+# update values in FPGA 
+############################################################
+
+record(bi, "$(S1){$(D1)}Ini:Con-Sts") {
+# Initialized to 1 by connect
+        field(DESC, "Connection init stat:")
+        field(VAL,  "0")
+        field(PINI, "YES")
+	field(INP,  "$(S1){$(D1)}DI:Ep60-I")
+        field(ZNAM, "Idle")
+        field(ONAM, "ConnectionInit")
+        field(FLNK, "$(S1){$(D1)}Con-Fo")
+}
+
+record(fanout,  "$(S1){$(D1)}Con-Fo") {
+#       field(LNK1, "$(S1){$(D1)}Con:Tuner-Fo")
+        field(LNK2, "$(S1){$(D1)}Con:llrf-Fo")
+}
+
+############################################################
+# NOV. 1, 2018: B. Holub: Beam Enable (I0>2mA) should
+# turn off the eQuench. We simulate Beam Enable
+# with Limiter Enable for testing:
+############################################################
+#record(calcout, "$(S1){$(D1)}Dsbl:EQ-Calc") {
+#  field(CALC,   "A?1:2")
+#  field(INPA,   "$(S1){$(D1)}Enbl:Limiter CPP")
+#  field(FLNK,   "$(S1){$(D1)}Dsbl:EQ-Seq")
+#}
+
+record(calcout, "$(S1){$(D1)}Dsbl:EQ-Calc") {
+  field(SCAN,   "1 second")
+  field(CALC,   "A>B?1:2")
+  field(INPA,   "SR:C03-BI{DCCT:1}I:Real-I CA")
+  field(INPB,   "2.0")
+  field(FLNK,   "$(S1){$(D1)}Dsbl:EQ-Seq")
+}
+
+record(seq,     "$(S1){$(D1)}Dsbl:EQ-Seq") {
+  field(SELM,   "Mask")
+  field(SELL,   "$(S1){$(D1)}Dsbl:EQ-Calc")
+#  field(DO1,    "0")
+#  field(LNK1,   "$(S1){$(D1)-$(SD8)}Enbl:SP PP")
+}
+
+
+

@@ -1,0 +1,8 @@
+file "okCircBufCh.template" {
+   pattern{ S1,     D1,     SD6,     TD1, TDN,   LEN,    NXT}
+       {\$(S1), \$(D1), \$(SD6), \$(TD1), 0, \$(NELM2),   1}
+       {\$(S1), \$(D1), \$(SD6), \$(TD1), 1, \$(NELM2),   2}
+       {\$(S1), \$(D1), \$(SD6), \$(TD1), 2, \$(NELM2),   3}
+       {\$(S1), \$(D1), \$(SD6), \$(TD1), 3, \$(NELM2),   4}
+       {\$(S1), \$(D1), \$(SD6), \$(TD1), 4, \$(NELM2),   5}
+}

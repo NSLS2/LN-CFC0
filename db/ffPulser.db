@@ -1,0 +1,161 @@
+record(waveform,  "$(S1){$(D1)}E:PulsEq-SP") {
+  field(FTVL,     "CHAR")
+  field(NELM,     "128")
+  field(DTYP,     "fileread")
+  field(INP,      "@PulsExprAmp.TXT")
+  field(PINI,     "YES")
+  info(autosaveFields_pass1, "VAL")
+}
+#
+# Copies the Amp expression, C+L+I+H, to the Pulse Phs field
+#
+record(acalcout,  "$(S1){$(D1)}State:FFP01-Cmd") {
+  field(DESC,     "Waveform copy:")
+  field(CALC,     "AA")
+  field(INAA,     "$(S1){$(D1)}E:PulsEq-SP")
+  field(NELM,     "128")
+  field(NUSE,     "128")
+  field(OUT,      "$(S1){$(D1)-$(TBL1)}E:Eq4 PP")
+  field(FLNK,     "$(S1){$(D1)}State:FFP10-Cmd")
+}
+#
+# Copies the Phs expression, C+L+I+H, to the Pulse Phs field
+#
+record(acalcout,  "$(S1){$(D1)}State:FFP10-Cmd") {
+  field(DESC,     "Waveform copy:")
+  field(CALC,     "AA")
+  field(INAA,     "$(S1){$(D1)}Phs:StrRef-SP")
+  field(NELM,     "128")
+  field(NUSE,     "128")
+  field(OUT,      "$(S1){$(D1)-$(TBL1)}Phs:Eq4 PP")
+  field(FLNK,     "$(S1){$(D1)}State:FFP20-Cmd")
+}
+
+record(acalcout,  "$(S1){$(D1)}State:FFP20-Cmd") {
+  field(DESC,     "Generate IX:")
+  field(CALC,     "IX")
+  field(NELM,     "512")
+  field(NUSE,     "512")
+  field(OUT,      "$(S1){$(D1)}E:FFPulsIX PP")
+}
+
+record(waveform,  "$(S1){$(D1)}E:FFPulsIX") {
+  field(FTVL,     "DOUBLE")
+  field(NELM,     "512")
+  field(FLNK,     "$(S1){$(D1)}State:FFP30-Cmd")
+}
+
+record(seq,       "$(S1){$(D1)}State:FFP30-Cmd") {
+#
+# Open loop!
+#
+  field(DO1,      "0")
+  field(LNK1,     "$(S1){$(D1)-$(TBL2)}Enbl:Cmd PP")
+#
+# Set inital length 51:
+#
+  field(DO1,      "51")
+  field(LNK1,     "$(S1){$(D1)-$(TBL1)}Val:D PP")
+#
+# Set scope mux to din1_2
+#
+  field(DO2,      "7")
+  field(LNK2,     "$(S1){$(D1)}Sw:Chan4-SP PP")
+#
+# Set closed_loop for variable C
+#
+  field(DO3,      "1")
+  field(LNK3,     "$(S1){$(D1)-$(TBL1)}Val:C.OMSL PP")
+#
+# Set low level to 0.001, hihg level to 0.05
+#
+  field(DO4,      "0.001")
+  field(LNK4,     "$(S1){$(D1)-$(TBL1)}Val:H PP")
+  field(DO5,      "0.05")
+  field(LNK5,     "$(S1){$(D1)-$(TBL1)}E:Fb-SP PP")
+#
+# Enable FF duty cycle
+#
+  field(DO6,      "1")
+  field(LNK6,     "$(S1){$(D1)-$(TBL1)}Mode:SP PP")
+#
+# Sets the zoom selector to 6
+# (This should done before enabling the FF!)
+#
+  field(DO7,      "6")
+  field(LNK7,     "$(S1){$(D1)}Cnt:Zoom PP")
+#
+# Turn the FF On!
+#
+  field(DO8,      "1")
+  field(LNK8,     "$(S1){$(D1)-$(TBL1)}Enbl:Cmd PP")
+  field(FLNK,     "$(S1){$(D1)}State:FFP40-Cmd")
+}
+
+record(seq,       "$(S1){$(D1)}State:FFP40-Cmd") {
+#
+# Force-Select the Pulse:
+#
+  field(DO1,      "3")
+  field(LNK1,     "$(S1){$(D1)-$(TBL1)}Cnt:Eq-Sel PP")
+  field(FLNK,     "$(S1){$(D1)}State:FFP50-Cmd")
+}
+
+record(ao,        "$(S1){$(D1)}Cnt:Len-SP") {
+  field(DRVH,     "100")
+  field(HOPR,     "100")
+  field(DRVL,     "0")
+  field(LOPR,     "0")
+  field(EGU,      "%")
+  field(PREC,     "1")
+  field(PINI,     "YES")
+  field(FLNK,     "$(S1){$(D1)}Cnt:Len-Calc")
+  info(autosaveFields_pass1, "VAL")
+}
+
+record(calcout,   "$(S1){$(D1)}Cnt:Len-Calc") {
+  field(CALC,     "A*512/100")
+  field(INPA,     "$(S1){$(D1)}Cnt:Len-SP")
+  field(OUT,      "$(S1){$(D1)-$(TBL1)}Val:D PP")
+  field(FLNK,     "$(S1){$(D1)}State:FFP50-Cmd")
+}
+
+record(ao,       "$(S1){$(D1)}E:FFPulsA-SP") {
+  field(DESC,    "Pulse Amp SP:")
+  field(OMSL,    "closed_loop")
+  field(DOL,     "$(S1){$(D1)-$(TBL1)}E:Fb-SP CPP NMS")
+  field(PREC,    "3")
+  field(DRVH,    "1")
+  field(DRVL,    "0")
+  field(HOPR,    "1")
+  field(LOPR,    "0")
+#
+# AUG. 9, 2017: B.Holub requested manual Apply
+#
+# field(FLNK,    "$(S1){$(D1)}State:FFP50-Cmd")
+}
+
+record(seq,       "$(S1){$(D1)}State:FFP50-Cmd") {
+#
+# Apply the settings!
+#
+#
+# AUG. 9, 2017: B.Holub requested manual Apply
+#
+#  field(DO1,      "1")
+#  field(LNK1,     "$(S1){$(D1)-$(TBL1)}Cmd:Apply PP")
+#  field(DLY1,     "0.1")
+#  field(DO2,      "1")
+#  field(LNK2,     "$(S1){$(D1)-$(TBL1)}Cmd:Apply PP")
+}
+
+record(calc,      "$(S1){$(D1)-$(TBL1)}Time:Calc") {
+  field(SCAN,     "1 second")
+  field(CALC,     "(2^(A+1))*B/2")
+  field(INPA,     "$(S1){$(D1)}Cnt:Zoom CPP")
+  field(INPB,     "0.0512")
+  field(PREC,     "4")
+  field(EGU,      "ms")
+}
+
+

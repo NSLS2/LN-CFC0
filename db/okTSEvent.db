@@ -1,0 +1,1536 @@
+#---------------------------------------------------------------------
+# BNL LLRF Controller TripStack Event Template
+#---------------------------------------------------------------------
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Evt:00-Calc") {
+  field(CALC,  "(A & 0x0E00)>>9")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Val:Word2-I")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Src:Evt00 PP")
+}
+
+record(mbbo,   "$(S1){$(D1)-$(SD7)}Src:Evt00") {
+  field(DESC,  "Evt:00 Src:")
+  field(ZRST,  "RFInhibit")
+  field(ONST,  "PPS")
+  field(TWST,  "Vacuum")
+  field(THST,  "Soft trip")
+  field(FRST,  "Quench")
+  field(FVST,  "Limiter")
+  field(SXST,  "AVAGO2")
+  field(SVST,  "Noname")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:Fid1Ev00")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Cnt:Fid1Ev00") {
+  field(DESC,  "Evt:00 revfid clc 1:")
+  field(CALC,  "((((A&0x1FF)<<16)+B)<<6)")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Val:Word2-I")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Val:Word1-I")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:Fid2Ev00")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Cnt:Fid2Ev00") {
+  field(DESC,  "Evt:00 revfid clc 2:")
+  field(CALC,  "((B&0xFC00)>>10)+A")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Cnt:Fid1Ev00  ")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Val:Word0-I")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Cnt:FidEvt00 PP")
+}
+
+record(ao,     "$(S1){$(D1)-$(SD7)}Cnt:FidEvt00") {
+  field(DESC,  "Evt:00 revfid cnt:")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Evt:00t1-Calc")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Evt:00t1-Calc") {
+  field(DESC,  "Evt:00 t1 clc:")
+  field(CALC,  "(A&0x03FF)/B")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Val:Word0-I")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Cnt:ClkTurn")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Evt:00-t1_ PP")
+}
+
+record(ao,     "$(S1){$(D1)-$(SD7)}Evt:00-t1_") {
+  field(DESC,  "Evt:00 t1:")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:BktEv00-Calc")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Cnt:BktEv00-Calc") {
+  field(DESC,  "Evt:00 buckets clc:")
+  field(CALC,  "(A-FLOOR(A))*B")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Evt:00-t1_")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Cnt:Harmonic")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Cnt:BktEvt00 PP")
+}
+
+record(ao,     "$(S1){$(D1)-$(SD7)}Cnt:BktEvt00") {
+  field(DESC,  "Evt:00 buckets:")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:TrnEv00-Calc")
+}
+
+record(calcout, "$(S1){$(D1)-$(SD7)}Cnt:TrnEv00-Calc") {
+  field(DESC,   "Evt:00 turns clc:")
+  field(CALC,   "FLOOR(A)")
+  field(INPA,   "$(S1){$(D1)-$(SD7)}Evt:00-t1_")
+  field(OUT,    "$(S1){$(D1)-$(SD7)}Cnt:TurnEvt00 PP")
+}
+
+record(ao,      "$(S1){$(D1)-$(SD7)}Cnt:TurnEvt00") {
+  field(DESC,   "Evt:00 turns:")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Evt:00Nxt")
+}
+
+#---------------------------------------------------------------------
+# TSNext - Advance the events in the stack
+#---------------------------------------------------------------------
+# Obs! TrigOut:TSNext advances the stack pointer too!
+#---------------------------------------------------------------------
+
+record(bo,      "$(S1){$(D1)-$(SD7)}Evt:00Nxt") {
+  field(DESC,   "Evt:00 TSNext:")
+  field(DTYP,   "asynInt32")
+  field(OUT ,   "@asyn($(PORT),0)TrigIn:EP41_08")
+  field(VAL ,   "1")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Cnt:020Nxt")
+}
+
+#---------------------------------------------------------------------
+# BNL LLRF Controller TripStack Event Template
+#---------------------------------------------------------------------
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Evt:01-Calc") {
+  field(CALC,  "(A & 0x0E00)>>9")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Val:Word2-I")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Src:Evt01 PP")
+}
+
+record(mbbo,   "$(S1){$(D1)-$(SD7)}Src:Evt01") {
+  field(DESC,  "Evt:01 Src:")
+  field(ZRST,  "RFInhibit")
+  field(ONST,  "PPS")
+  field(TWST,  "Vacuum")
+  field(THST,  "Soft trip")
+  field(FRST,  "Quench")
+  field(FVST,  "Limiter")
+  field(SXST,  "AVAGO2")
+  field(SVST,  "Noname")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:Fid1Ev01")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Cnt:Fid1Ev01") {
+  field(DESC,  "Evt:01 revfid clc 1:")
+  field(CALC,  "((((A&0x1FF)<<16)+B)<<6)")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Val:Word2-I")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Val:Word1-I")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:Fid2Ev01")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Cnt:Fid2Ev01") {
+  field(DESC,  "Evt:01 revfid clc 2:")
+  field(CALC,  "((B&0xFC00)>>10)+A")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Cnt:Fid1Ev01  ")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Val:Word0-I")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Cnt:FidEvt01 PP")
+}
+
+record(ao,     "$(S1){$(D1)-$(SD7)}Cnt:FidEvt01") {
+  field(DESC,  "Evt:01 revfid cnt:")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Evt:01t1-Calc")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Evt:01t1-Calc") {
+  field(DESC,  "Evt:01 t1 clc:")
+  field(CALC,  "(A&0x03FF)/B")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Val:Word0-I")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Cnt:ClkTurn")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Evt:01-t1_ PP")
+}
+
+record(ao,     "$(S1){$(D1)-$(SD7)}Evt:01-t1_") {
+  field(DESC,  "Evt:01 t1:")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:BktEv01-Calc")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Cnt:BktEv01-Calc") {
+  field(DESC,  "Evt:01 buckets clc:")
+  field(CALC,  "(A-FLOOR(A))*B")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Evt:01-t1_")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Cnt:Harmonic")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Cnt:BktEvt01 PP")
+}
+
+record(ao,     "$(S1){$(D1)-$(SD7)}Cnt:BktEvt01") {
+  field(DESC,  "Evt:01 buckets:")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:TrnEv01-Calc")
+}
+
+record(calcout, "$(S1){$(D1)-$(SD7)}Cnt:TrnEv01-Calc") {
+  field(DESC,   "Evt:01 turns clc:")
+  field(CALC,   "FLOOR(A)")
+  field(INPA,   "$(S1){$(D1)-$(SD7)}Evt:01-t1_")
+  field(OUT,    "$(S1){$(D1)-$(SD7)}Cnt:TurnEvt01 PP")
+}
+
+record(ao,      "$(S1){$(D1)-$(SD7)}Cnt:TurnEvt01") {
+  field(DESC,   "Evt:01 turns:")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Evt:01Nxt")
+}
+
+#---------------------------------------------------------------------
+# TSNext - Advance the events in the stack
+#---------------------------------------------------------------------
+# Obs! TrigOut:TSNext advances the stack pointer too!
+#---------------------------------------------------------------------
+
+record(bo,      "$(S1){$(D1)-$(SD7)}Evt:01Nxt") {
+  field(DESC,   "Evt:01 TSNext:")
+  field(DTYP,   "asynInt32")
+  field(OUT ,   "@asyn($(PORT),0)TrigIn:EP41_08")
+  field(VAL ,   "1")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Cnt:020Nxt")
+}
+
+#---------------------------------------------------------------------
+# BNL LLRF Controller TripStack Event Template
+#---------------------------------------------------------------------
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Evt:02-Calc") {
+  field(CALC,  "(A & 0x0E00)>>9")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Val:Word2-I")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Src:Evt02 PP")
+}
+
+record(mbbo,   "$(S1){$(D1)-$(SD7)}Src:Evt02") {
+  field(DESC,  "Evt:02 Src:")
+  field(ZRST,  "RFInhibit")
+  field(ONST,  "PPS")
+  field(TWST,  "Vacuum")
+  field(THST,  "Soft trip")
+  field(FRST,  "Quench")
+  field(FVST,  "Limiter")
+  field(SXST,  "AVAGO2")
+  field(SVST,  "Noname")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:Fid1Ev02")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Cnt:Fid1Ev02") {
+  field(DESC,  "Evt:02 revfid clc 1:")
+  field(CALC,  "((((A&0x1FF)<<16)+B)<<6)")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Val:Word2-I")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Val:Word1-I")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:Fid2Ev02")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Cnt:Fid2Ev02") {
+  field(DESC,  "Evt:02 revfid clc 2:")
+  field(CALC,  "((B&0xFC00)>>10)+A")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Cnt:Fid1Ev02  ")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Val:Word0-I")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Cnt:FidEvt02 PP")
+}
+
+record(ao,     "$(S1){$(D1)-$(SD7)}Cnt:FidEvt02") {
+  field(DESC,  "Evt:02 revfid cnt:")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Evt:02t1-Calc")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Evt:02t1-Calc") {
+  field(DESC,  "Evt:02 t1 clc:")
+  field(CALC,  "(A&0x03FF)/B")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Val:Word0-I")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Cnt:ClkTurn")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Evt:02-t1_ PP")
+}
+
+record(ao,     "$(S1){$(D1)-$(SD7)}Evt:02-t1_") {
+  field(DESC,  "Evt:02 t1:")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:BktEv02-Calc")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Cnt:BktEv02-Calc") {
+  field(DESC,  "Evt:02 buckets clc:")
+  field(CALC,  "(A-FLOOR(A))*B")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Evt:02-t1_")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Cnt:Harmonic")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Cnt:BktEvt02 PP")
+}
+
+record(ao,     "$(S1){$(D1)-$(SD7)}Cnt:BktEvt02") {
+  field(DESC,  "Evt:02 buckets:")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:TrnEv02-Calc")
+}
+
+record(calcout, "$(S1){$(D1)-$(SD7)}Cnt:TrnEv02-Calc") {
+  field(DESC,   "Evt:02 turns clc:")
+  field(CALC,   "FLOOR(A)")
+  field(INPA,   "$(S1){$(D1)-$(SD7)}Evt:02-t1_")
+  field(OUT,    "$(S1){$(D1)-$(SD7)}Cnt:TurnEvt02 PP")
+}
+
+record(ao,      "$(S1){$(D1)-$(SD7)}Cnt:TurnEvt02") {
+  field(DESC,   "Evt:02 turns:")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Evt:02Nxt")
+}
+
+#---------------------------------------------------------------------
+# TSNext - Advance the events in the stack
+#---------------------------------------------------------------------
+# Obs! TrigOut:TSNext advances the stack pointer too!
+#---------------------------------------------------------------------
+
+record(bo,      "$(S1){$(D1)-$(SD7)}Evt:02Nxt") {
+  field(DESC,   "Evt:02 TSNext:")
+  field(DTYP,   "asynInt32")
+  field(OUT ,   "@asyn($(PORT),0)TrigIn:EP41_08")
+  field(VAL ,   "1")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Cnt:020Nxt")
+}
+
+#---------------------------------------------------------------------
+# BNL LLRF Controller TripStack Event Template
+#---------------------------------------------------------------------
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Evt:03-Calc") {
+  field(CALC,  "(A & 0x0E00)>>9")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Val:Word2-I")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Src:Evt03 PP")
+}
+
+record(mbbo,   "$(S1){$(D1)-$(SD7)}Src:Evt03") {
+  field(DESC,  "Evt:03 Src:")
+  field(ZRST,  "RFInhibit")
+  field(ONST,  "PPS")
+  field(TWST,  "Vacuum")
+  field(THST,  "Soft trip")
+  field(FRST,  "Quench")
+  field(FVST,  "Limiter")
+  field(SXST,  "AVAGO2")
+  field(SVST,  "Noname")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:Fid1Ev03")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Cnt:Fid1Ev03") {
+  field(DESC,  "Evt:03 revfid clc 1:")
+  field(CALC,  "((((A&0x1FF)<<16)+B)<<6)")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Val:Word2-I")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Val:Word1-I")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:Fid2Ev03")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Cnt:Fid2Ev03") {
+  field(DESC,  "Evt:03 revfid clc 2:")
+  field(CALC,  "((B&0xFC00)>>10)+A")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Cnt:Fid1Ev03  ")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Val:Word0-I")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Cnt:FidEvt03 PP")
+}
+
+record(ao,     "$(S1){$(D1)-$(SD7)}Cnt:FidEvt03") {
+  field(DESC,  "Evt:03 revfid cnt:")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Evt:03t1-Calc")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Evt:03t1-Calc") {
+  field(DESC,  "Evt:03 t1 clc:")
+  field(CALC,  "(A&0x03FF)/B")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Val:Word0-I")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Cnt:ClkTurn")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Evt:03-t1_ PP")
+}
+
+record(ao,     "$(S1){$(D1)-$(SD7)}Evt:03-t1_") {
+  field(DESC,  "Evt:03 t1:")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:BktEv03-Calc")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Cnt:BktEv03-Calc") {
+  field(DESC,  "Evt:03 buckets clc:")
+  field(CALC,  "(A-FLOOR(A))*B")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Evt:03-t1_")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Cnt:Harmonic")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Cnt:BktEvt03 PP")
+}
+
+record(ao,     "$(S1){$(D1)-$(SD7)}Cnt:BktEvt03") {
+  field(DESC,  "Evt:03 buckets:")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:TrnEv03-Calc")
+}
+
+record(calcout, "$(S1){$(D1)-$(SD7)}Cnt:TrnEv03-Calc") {
+  field(DESC,   "Evt:03 turns clc:")
+  field(CALC,   "FLOOR(A)")
+  field(INPA,   "$(S1){$(D1)-$(SD7)}Evt:03-t1_")
+  field(OUT,    "$(S1){$(D1)-$(SD7)}Cnt:TurnEvt03 PP")
+}
+
+record(ao,      "$(S1){$(D1)-$(SD7)}Cnt:TurnEvt03") {
+  field(DESC,   "Evt:03 turns:")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Evt:03Nxt")
+}
+
+#---------------------------------------------------------------------
+# TSNext - Advance the events in the stack
+#---------------------------------------------------------------------
+# Obs! TrigOut:TSNext advances the stack pointer too!
+#---------------------------------------------------------------------
+
+record(bo,      "$(S1){$(D1)-$(SD7)}Evt:03Nxt") {
+  field(DESC,   "Evt:03 TSNext:")
+  field(DTYP,   "asynInt32")
+  field(OUT ,   "@asyn($(PORT),0)TrigIn:EP41_08")
+  field(VAL ,   "1")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Cnt:020Nxt")
+}
+
+#---------------------------------------------------------------------
+# BNL LLRF Controller TripStack Event Template
+#---------------------------------------------------------------------
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Evt:04-Calc") {
+  field(CALC,  "(A & 0x0E00)>>9")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Val:Word2-I")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Src:Evt04 PP")
+}
+
+record(mbbo,   "$(S1){$(D1)-$(SD7)}Src:Evt04") {
+  field(DESC,  "Evt:04 Src:")
+  field(ZRST,  "RFInhibit")
+  field(ONST,  "PPS")
+  field(TWST,  "Vacuum")
+  field(THST,  "Soft trip")
+  field(FRST,  "Quench")
+  field(FVST,  "Limiter")
+  field(SXST,  "AVAGO2")
+  field(SVST,  "Noname")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:Fid1Ev04")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Cnt:Fid1Ev04") {
+  field(DESC,  "Evt:04 revfid clc 1:")
+  field(CALC,  "((((A&0x1FF)<<16)+B)<<6)")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Val:Word2-I")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Val:Word1-I")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:Fid2Ev04")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Cnt:Fid2Ev04") {
+  field(DESC,  "Evt:04 revfid clc 2:")
+  field(CALC,  "((B&0xFC00)>>10)+A")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Cnt:Fid1Ev04  ")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Val:Word0-I")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Cnt:FidEvt04 PP")
+}
+
+record(ao,     "$(S1){$(D1)-$(SD7)}Cnt:FidEvt04") {
+  field(DESC,  "Evt:04 revfid cnt:")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Evt:04t1-Calc")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Evt:04t1-Calc") {
+  field(DESC,  "Evt:04 t1 clc:")
+  field(CALC,  "(A&0x03FF)/B")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Val:Word0-I")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Cnt:ClkTurn")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Evt:04-t1_ PP")
+}
+
+record(ao,     "$(S1){$(D1)-$(SD7)}Evt:04-t1_") {
+  field(DESC,  "Evt:04 t1:")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:BktEv04-Calc")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Cnt:BktEv04-Calc") {
+  field(DESC,  "Evt:04 buckets clc:")
+  field(CALC,  "(A-FLOOR(A))*B")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Evt:04-t1_")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Cnt:Harmonic")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Cnt:BktEvt04 PP")
+}
+
+record(ao,     "$(S1){$(D1)-$(SD7)}Cnt:BktEvt04") {
+  field(DESC,  "Evt:04 buckets:")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:TrnEv04-Calc")
+}
+
+record(calcout, "$(S1){$(D1)-$(SD7)}Cnt:TrnEv04-Calc") {
+  field(DESC,   "Evt:04 turns clc:")
+  field(CALC,   "FLOOR(A)")
+  field(INPA,   "$(S1){$(D1)-$(SD7)}Evt:04-t1_")
+  field(OUT,    "$(S1){$(D1)-$(SD7)}Cnt:TurnEvt04 PP")
+}
+
+record(ao,      "$(S1){$(D1)-$(SD7)}Cnt:TurnEvt04") {
+  field(DESC,   "Evt:04 turns:")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Evt:04Nxt")
+}
+
+#---------------------------------------------------------------------
+# TSNext - Advance the events in the stack
+#---------------------------------------------------------------------
+# Obs! TrigOut:TSNext advances the stack pointer too!
+#---------------------------------------------------------------------
+
+record(bo,      "$(S1){$(D1)-$(SD7)}Evt:04Nxt") {
+  field(DESC,   "Evt:04 TSNext:")
+  field(DTYP,   "asynInt32")
+  field(OUT ,   "@asyn($(PORT),0)TrigIn:EP41_08")
+  field(VAL ,   "1")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Cnt:020Nxt")
+}
+
+#---------------------------------------------------------------------
+# BNL LLRF Controller TripStack Event Template
+#---------------------------------------------------------------------
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Evt:05-Calc") {
+  field(CALC,  "(A & 0x0E00)>>9")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Val:Word2-I")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Src:Evt05 PP")
+}
+
+record(mbbo,   "$(S1){$(D1)-$(SD7)}Src:Evt05") {
+  field(DESC,  "Evt:05 Src:")
+  field(ZRST,  "RFInhibit")
+  field(ONST,  "PPS")
+  field(TWST,  "Vacuum")
+  field(THST,  "Soft trip")
+  field(FRST,  "Quench")
+  field(FVST,  "Limiter")
+  field(SXST,  "AVAGO2")
+  field(SVST,  "Noname")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:Fid1Ev05")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Cnt:Fid1Ev05") {
+  field(DESC,  "Evt:05 revfid clc 1:")
+  field(CALC,  "((((A&0x1FF)<<16)+B)<<6)")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Val:Word2-I")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Val:Word1-I")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:Fid2Ev05")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Cnt:Fid2Ev05") {
+  field(DESC,  "Evt:05 revfid clc 2:")
+  field(CALC,  "((B&0xFC00)>>10)+A")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Cnt:Fid1Ev05  ")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Val:Word0-I")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Cnt:FidEvt05 PP")
+}
+
+record(ao,     "$(S1){$(D1)-$(SD7)}Cnt:FidEvt05") {
+  field(DESC,  "Evt:05 revfid cnt:")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Evt:05t1-Calc")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Evt:05t1-Calc") {
+  field(DESC,  "Evt:05 t1 clc:")
+  field(CALC,  "(A&0x03FF)/B")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Val:Word0-I")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Cnt:ClkTurn")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Evt:05-t1_ PP")
+}
+
+record(ao,     "$(S1){$(D1)-$(SD7)}Evt:05-t1_") {
+  field(DESC,  "Evt:05 t1:")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:BktEv05-Calc")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Cnt:BktEv05-Calc") {
+  field(DESC,  "Evt:05 buckets clc:")
+  field(CALC,  "(A-FLOOR(A))*B")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Evt:05-t1_")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Cnt:Harmonic")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Cnt:BktEvt05 PP")
+}
+
+record(ao,     "$(S1){$(D1)-$(SD7)}Cnt:BktEvt05") {
+  field(DESC,  "Evt:05 buckets:")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:TrnEv05-Calc")
+}
+
+record(calcout, "$(S1){$(D1)-$(SD7)}Cnt:TrnEv05-Calc") {
+  field(DESC,   "Evt:05 turns clc:")
+  field(CALC,   "FLOOR(A)")
+  field(INPA,   "$(S1){$(D1)-$(SD7)}Evt:05-t1_")
+  field(OUT,    "$(S1){$(D1)-$(SD7)}Cnt:TurnEvt05 PP")
+}
+
+record(ao,      "$(S1){$(D1)-$(SD7)}Cnt:TurnEvt05") {
+  field(DESC,   "Evt:05 turns:")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Evt:05Nxt")
+}
+
+#---------------------------------------------------------------------
+# TSNext - Advance the events in the stack
+#---------------------------------------------------------------------
+# Obs! TrigOut:TSNext advances the stack pointer too!
+#---------------------------------------------------------------------
+
+record(bo,      "$(S1){$(D1)-$(SD7)}Evt:05Nxt") {
+  field(DESC,   "Evt:05 TSNext:")
+  field(DTYP,   "asynInt32")
+  field(OUT ,   "@asyn($(PORT),0)TrigIn:EP41_08")
+  field(VAL ,   "1")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Cnt:020Nxt")
+}
+
+#---------------------------------------------------------------------
+# BNL LLRF Controller TripStack Event Template
+#---------------------------------------------------------------------
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Evt:06-Calc") {
+  field(CALC,  "(A & 0x0E00)>>9")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Val:Word2-I")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Src:Evt06 PP")
+}
+
+record(mbbo,   "$(S1){$(D1)-$(SD7)}Src:Evt06") {
+  field(DESC,  "Evt:06 Src:")
+  field(ZRST,  "RFInhibit")
+  field(ONST,  "PPS")
+  field(TWST,  "Vacuum")
+  field(THST,  "Soft trip")
+  field(FRST,  "Quench")
+  field(FVST,  "Limiter")
+  field(SXST,  "AVAGO2")
+  field(SVST,  "Noname")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:Fid1Ev06")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Cnt:Fid1Ev06") {
+  field(DESC,  "Evt:06 revfid clc 1:")
+  field(CALC,  "((((A&0x1FF)<<16)+B)<<6)")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Val:Word2-I")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Val:Word1-I")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:Fid2Ev06")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Cnt:Fid2Ev06") {
+  field(DESC,  "Evt:06 revfid clc 2:")
+  field(CALC,  "((B&0xFC00)>>10)+A")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Cnt:Fid1Ev06  ")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Val:Word0-I")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Cnt:FidEvt06 PP")
+}
+
+record(ao,     "$(S1){$(D1)-$(SD7)}Cnt:FidEvt06") {
+  field(DESC,  "Evt:06 revfid cnt:")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Evt:06t1-Calc")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Evt:06t1-Calc") {
+  field(DESC,  "Evt:06 t1 clc:")
+  field(CALC,  "(A&0x03FF)/B")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Val:Word0-I")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Cnt:ClkTurn")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Evt:06-t1_ PP")
+}
+
+record(ao,     "$(S1){$(D1)-$(SD7)}Evt:06-t1_") {
+  field(DESC,  "Evt:06 t1:")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:BktEv06-Calc")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Cnt:BktEv06-Calc") {
+  field(DESC,  "Evt:06 buckets clc:")
+  field(CALC,  "(A-FLOOR(A))*B")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Evt:06-t1_")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Cnt:Harmonic")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Cnt:BktEvt06 PP")
+}
+
+record(ao,     "$(S1){$(D1)-$(SD7)}Cnt:BktEvt06") {
+  field(DESC,  "Evt:06 buckets:")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:TrnEv06-Calc")
+}
+
+record(calcout, "$(S1){$(D1)-$(SD7)}Cnt:TrnEv06-Calc") {
+  field(DESC,   "Evt:06 turns clc:")
+  field(CALC,   "FLOOR(A)")
+  field(INPA,   "$(S1){$(D1)-$(SD7)}Evt:06-t1_")
+  field(OUT,    "$(S1){$(D1)-$(SD7)}Cnt:TurnEvt06 PP")
+}
+
+record(ao,      "$(S1){$(D1)-$(SD7)}Cnt:TurnEvt06") {
+  field(DESC,   "Evt:06 turns:")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Evt:06Nxt")
+}
+
+#---------------------------------------------------------------------
+# TSNext - Advance the events in the stack
+#---------------------------------------------------------------------
+# Obs! TrigOut:TSNext advances the stack pointer too!
+#---------------------------------------------------------------------
+
+record(bo,      "$(S1){$(D1)-$(SD7)}Evt:06Nxt") {
+  field(DESC,   "Evt:06 TSNext:")
+  field(DTYP,   "asynInt32")
+  field(OUT ,   "@asyn($(PORT),0)TrigIn:EP41_08")
+  field(VAL ,   "1")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Cnt:020Nxt")
+}
+
+#---------------------------------------------------------------------
+# BNL LLRF Controller TripStack Event Template
+#---------------------------------------------------------------------
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Evt:07-Calc") {
+  field(CALC,  "(A & 0x0E00)>>9")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Val:Word2-I")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Src:Evt07 PP")
+}
+
+record(mbbo,   "$(S1){$(D1)-$(SD7)}Src:Evt07") {
+  field(DESC,  "Evt:07 Src:")
+  field(ZRST,  "RFInhibit")
+  field(ONST,  "PPS")
+  field(TWST,  "Vacuum")
+  field(THST,  "Soft trip")
+  field(FRST,  "Quench")
+  field(FVST,  "Limiter")
+  field(SXST,  "AVAGO2")
+  field(SVST,  "Noname")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:Fid1Ev07")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Cnt:Fid1Ev07") {
+  field(DESC,  "Evt:07 revfid clc 1:")
+  field(CALC,  "((((A&0x1FF)<<16)+B)<<6)")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Val:Word2-I")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Val:Word1-I")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:Fid2Ev07")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Cnt:Fid2Ev07") {
+  field(DESC,  "Evt:07 revfid clc 2:")
+  field(CALC,  "((B&0xFC00)>>10)+A")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Cnt:Fid1Ev07  ")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Val:Word0-I")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Cnt:FidEvt07 PP")
+}
+
+record(ao,     "$(S1){$(D1)-$(SD7)}Cnt:FidEvt07") {
+  field(DESC,  "Evt:07 revfid cnt:")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Evt:07t1-Calc")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Evt:07t1-Calc") {
+  field(DESC,  "Evt:07 t1 clc:")
+  field(CALC,  "(A&0x03FF)/B")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Val:Word0-I")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Cnt:ClkTurn")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Evt:07-t1_ PP")
+}
+
+record(ao,     "$(S1){$(D1)-$(SD7)}Evt:07-t1_") {
+  field(DESC,  "Evt:07 t1:")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:BktEv07-Calc")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Cnt:BktEv07-Calc") {
+  field(DESC,  "Evt:07 buckets clc:")
+  field(CALC,  "(A-FLOOR(A))*B")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Evt:07-t1_")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Cnt:Harmonic")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Cnt:BktEvt07 PP")
+}
+
+record(ao,     "$(S1){$(D1)-$(SD7)}Cnt:BktEvt07") {
+  field(DESC,  "Evt:07 buckets:")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:TrnEv07-Calc")
+}
+
+record(calcout, "$(S1){$(D1)-$(SD7)}Cnt:TrnEv07-Calc") {
+  field(DESC,   "Evt:07 turns clc:")
+  field(CALC,   "FLOOR(A)")
+  field(INPA,   "$(S1){$(D1)-$(SD7)}Evt:07-t1_")
+  field(OUT,    "$(S1){$(D1)-$(SD7)}Cnt:TurnEvt07 PP")
+}
+
+record(ao,      "$(S1){$(D1)-$(SD7)}Cnt:TurnEvt07") {
+  field(DESC,   "Evt:07 turns:")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Evt:07Nxt")
+}
+
+#---------------------------------------------------------------------
+# TSNext - Advance the events in the stack
+#---------------------------------------------------------------------
+# Obs! TrigOut:TSNext advances the stack pointer too!
+#---------------------------------------------------------------------
+
+record(bo,      "$(S1){$(D1)-$(SD7)}Evt:07Nxt") {
+  field(DESC,   "Evt:07 TSNext:")
+  field(DTYP,   "asynInt32")
+  field(OUT ,   "@asyn($(PORT),0)TrigIn:EP41_08")
+  field(VAL ,   "1")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Cnt:020Nxt")
+}
+
+#---------------------------------------------------------------------
+# BNL LLRF Controller TripStack Event Template
+#---------------------------------------------------------------------
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Evt:08-Calc") {
+  field(CALC,  "(A & 0x0E00)>>9")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Val:Word2-I")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Src:Evt08 PP")
+}
+
+record(mbbo,   "$(S1){$(D1)-$(SD7)}Src:Evt08") {
+  field(DESC,  "Evt:08 Src:")
+  field(ZRST,  "RFInhibit")
+  field(ONST,  "PPS")
+  field(TWST,  "Vacuum")
+  field(THST,  "Soft trip")
+  field(FRST,  "Quench")
+  field(FVST,  "Limiter")
+  field(SXST,  "AVAGO2")
+  field(SVST,  "Noname")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:Fid1Ev08")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Cnt:Fid1Ev08") {
+  field(DESC,  "Evt:08 revfid clc 1:")
+  field(CALC,  "((((A&0x1FF)<<16)+B)<<6)")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Val:Word2-I")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Val:Word1-I")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:Fid2Ev08")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Cnt:Fid2Ev08") {
+  field(DESC,  "Evt:08 revfid clc 2:")
+  field(CALC,  "((B&0xFC00)>>10)+A")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Cnt:Fid1Ev08  ")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Val:Word0-I")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Cnt:FidEvt08 PP")
+}
+
+record(ao,     "$(S1){$(D1)-$(SD7)}Cnt:FidEvt08") {
+  field(DESC,  "Evt:08 revfid cnt:")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Evt:08t1-Calc")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Evt:08t1-Calc") {
+  field(DESC,  "Evt:08 t1 clc:")
+  field(CALC,  "(A&0x03FF)/B")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Val:Word0-I")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Cnt:ClkTurn")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Evt:08-t1_ PP")
+}
+
+record(ao,     "$(S1){$(D1)-$(SD7)}Evt:08-t1_") {
+  field(DESC,  "Evt:08 t1:")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:BktEv08-Calc")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Cnt:BktEv08-Calc") {
+  field(DESC,  "Evt:08 buckets clc:")
+  field(CALC,  "(A-FLOOR(A))*B")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Evt:08-t1_")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Cnt:Harmonic")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Cnt:BktEvt08 PP")
+}
+
+record(ao,     "$(S1){$(D1)-$(SD7)}Cnt:BktEvt08") {
+  field(DESC,  "Evt:08 buckets:")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:TrnEv08-Calc")
+}
+
+record(calcout, "$(S1){$(D1)-$(SD7)}Cnt:TrnEv08-Calc") {
+  field(DESC,   "Evt:08 turns clc:")
+  field(CALC,   "FLOOR(A)")
+  field(INPA,   "$(S1){$(D1)-$(SD7)}Evt:08-t1_")
+  field(OUT,    "$(S1){$(D1)-$(SD7)}Cnt:TurnEvt08 PP")
+}
+
+record(ao,      "$(S1){$(D1)-$(SD7)}Cnt:TurnEvt08") {
+  field(DESC,   "Evt:08 turns:")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Evt:08Nxt")
+}
+
+#---------------------------------------------------------------------
+# TSNext - Advance the events in the stack
+#---------------------------------------------------------------------
+# Obs! TrigOut:TSNext advances the stack pointer too!
+#---------------------------------------------------------------------
+
+record(bo,      "$(S1){$(D1)-$(SD7)}Evt:08Nxt") {
+  field(DESC,   "Evt:08 TSNext:")
+  field(DTYP,   "asynInt32")
+  field(OUT ,   "@asyn($(PORT),0)TrigIn:EP41_08")
+  field(VAL ,   "1")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Cnt:020Nxt")
+}
+
+#---------------------------------------------------------------------
+# BNL LLRF Controller TripStack Event Template
+#---------------------------------------------------------------------
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Evt:09-Calc") {
+  field(CALC,  "(A & 0x0E00)>>9")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Val:Word2-I")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Src:Evt09 PP")
+}
+
+record(mbbo,   "$(S1){$(D1)-$(SD7)}Src:Evt09") {
+  field(DESC,  "Evt:09 Src:")
+  field(ZRST,  "RFInhibit")
+  field(ONST,  "PPS")
+  field(TWST,  "Vacuum")
+  field(THST,  "Soft trip")
+  field(FRST,  "Quench")
+  field(FVST,  "Limiter")
+  field(SXST,  "AVAGO2")
+  field(SVST,  "Noname")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:Fid1Ev09")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Cnt:Fid1Ev09") {
+  field(DESC,  "Evt:09 revfid clc 1:")
+  field(CALC,  "((((A&0x1FF)<<16)+B)<<6)")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Val:Word2-I")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Val:Word1-I")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:Fid2Ev09")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Cnt:Fid2Ev09") {
+  field(DESC,  "Evt:09 revfid clc 2:")
+  field(CALC,  "((B&0xFC00)>>10)+A")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Cnt:Fid1Ev09  ")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Val:Word0-I")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Cnt:FidEvt09 PP")
+}
+
+record(ao,     "$(S1){$(D1)-$(SD7)}Cnt:FidEvt09") {
+  field(DESC,  "Evt:09 revfid cnt:")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Evt:09t1-Calc")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Evt:09t1-Calc") {
+  field(DESC,  "Evt:09 t1 clc:")
+  field(CALC,  "(A&0x03FF)/B")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Val:Word0-I")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Cnt:ClkTurn")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Evt:09-t1_ PP")
+}
+
+record(ao,     "$(S1){$(D1)-$(SD7)}Evt:09-t1_") {
+  field(DESC,  "Evt:09 t1:")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:BktEv09-Calc")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Cnt:BktEv09-Calc") {
+  field(DESC,  "Evt:09 buckets clc:")
+  field(CALC,  "(A-FLOOR(A))*B")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Evt:09-t1_")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Cnt:Harmonic")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Cnt:BktEvt09 PP")
+}
+
+record(ao,     "$(S1){$(D1)-$(SD7)}Cnt:BktEvt09") {
+  field(DESC,  "Evt:09 buckets:")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:TrnEv09-Calc")
+}
+
+record(calcout, "$(S1){$(D1)-$(SD7)}Cnt:TrnEv09-Calc") {
+  field(DESC,   "Evt:09 turns clc:")
+  field(CALC,   "FLOOR(A)")
+  field(INPA,   "$(S1){$(D1)-$(SD7)}Evt:09-t1_")
+  field(OUT,    "$(S1){$(D1)-$(SD7)}Cnt:TurnEvt09 PP")
+}
+
+record(ao,      "$(S1){$(D1)-$(SD7)}Cnt:TurnEvt09") {
+  field(DESC,   "Evt:09 turns:")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Evt:09Nxt")
+}
+
+#---------------------------------------------------------------------
+# TSNext - Advance the events in the stack
+#---------------------------------------------------------------------
+# Obs! TrigOut:TSNext advances the stack pointer too!
+#---------------------------------------------------------------------
+
+record(bo,      "$(S1){$(D1)-$(SD7)}Evt:09Nxt") {
+  field(DESC,   "Evt:09 TSNext:")
+  field(DTYP,   "asynInt32")
+  field(OUT ,   "@asyn($(PORT),0)TrigIn:EP41_08")
+  field(VAL ,   "1")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Cnt:020Nxt")
+}
+
+#---------------------------------------------------------------------
+# BNL LLRF Controller TripStack Event Template
+#---------------------------------------------------------------------
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Evt:10-Calc") {
+  field(CALC,  "(A & 0x0E00)>>9")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Val:Word2-I")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Src:Evt10 PP")
+}
+
+record(mbbo,   "$(S1){$(D1)-$(SD7)}Src:Evt10") {
+  field(DESC,  "Evt:10 Src:")
+  field(ZRST,  "RFInhibit")
+  field(ONST,  "PPS")
+  field(TWST,  "Vacuum")
+  field(THST,  "Soft trip")
+  field(FRST,  "Quench")
+  field(FVST,  "Limiter")
+  field(SXST,  "AVAGO2")
+  field(SVST,  "Noname")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:Fid1Ev10")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Cnt:Fid1Ev10") {
+  field(DESC,  "Evt:10 revfid clc 1:")
+  field(CALC,  "((((A&0x1FF)<<16)+B)<<6)")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Val:Word2-I")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Val:Word1-I")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:Fid2Ev10")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Cnt:Fid2Ev10") {
+  field(DESC,  "Evt:10 revfid clc 2:")
+  field(CALC,  "((B&0xFC00)>>10)+A")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Cnt:Fid1Ev10  ")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Val:Word0-I")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Cnt:FidEvt10 PP")
+}
+
+record(ao,     "$(S1){$(D1)-$(SD7)}Cnt:FidEvt10") {
+  field(DESC,  "Evt:10 revfid cnt:")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Evt:10t1-Calc")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Evt:10t1-Calc") {
+  field(DESC,  "Evt:10 t1 clc:")
+  field(CALC,  "(A&0x03FF)/B")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Val:Word0-I")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Cnt:ClkTurn")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Evt:10-t1_ PP")
+}
+
+record(ao,     "$(S1){$(D1)-$(SD7)}Evt:10-t1_") {
+  field(DESC,  "Evt:10 t1:")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:BktEv10-Calc")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Cnt:BktEv10-Calc") {
+  field(DESC,  "Evt:10 buckets clc:")
+  field(CALC,  "(A-FLOOR(A))*B")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Evt:10-t1_")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Cnt:Harmonic")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Cnt:BktEvt10 PP")
+}
+
+record(ao,     "$(S1){$(D1)-$(SD7)}Cnt:BktEvt10") {
+  field(DESC,  "Evt:10 buckets:")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:TrnEv10-Calc")
+}
+
+record(calcout, "$(S1){$(D1)-$(SD7)}Cnt:TrnEv10-Calc") {
+  field(DESC,   "Evt:10 turns clc:")
+  field(CALC,   "FLOOR(A)")
+  field(INPA,   "$(S1){$(D1)-$(SD7)}Evt:10-t1_")
+  field(OUT,    "$(S1){$(D1)-$(SD7)}Cnt:TurnEvt10 PP")
+}
+
+record(ao,      "$(S1){$(D1)-$(SD7)}Cnt:TurnEvt10") {
+  field(DESC,   "Evt:10 turns:")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Evt:10Nxt")
+}
+
+#---------------------------------------------------------------------
+# TSNext - Advance the events in the stack
+#---------------------------------------------------------------------
+# Obs! TrigOut:TSNext advances the stack pointer too!
+#---------------------------------------------------------------------
+
+record(bo,      "$(S1){$(D1)-$(SD7)}Evt:10Nxt") {
+  field(DESC,   "Evt:10 TSNext:")
+  field(DTYP,   "asynInt32")
+  field(OUT ,   "@asyn($(PORT),0)TrigIn:EP41_08")
+  field(VAL ,   "1")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Cnt:020Nxt")
+}
+
+#---------------------------------------------------------------------
+# BNL LLRF Controller TripStack Event Template
+#---------------------------------------------------------------------
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Evt:11-Calc") {
+  field(CALC,  "(A & 0x0E00)>>9")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Val:Word2-I")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Src:Evt11 PP")
+}
+
+record(mbbo,   "$(S1){$(D1)-$(SD7)}Src:Evt11") {
+  field(DESC,  "Evt:11 Src:")
+  field(ZRST,  "RFInhibit")
+  field(ONST,  "PPS")
+  field(TWST,  "Vacuum")
+  field(THST,  "Soft trip")
+  field(FRST,  "Quench")
+  field(FVST,  "Limiter")
+  field(SXST,  "AVAGO2")
+  field(SVST,  "Noname")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:Fid1Ev11")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Cnt:Fid1Ev11") {
+  field(DESC,  "Evt:11 revfid clc 1:")
+  field(CALC,  "((((A&0x1FF)<<16)+B)<<6)")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Val:Word2-I")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Val:Word1-I")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:Fid2Ev11")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Cnt:Fid2Ev11") {
+  field(DESC,  "Evt:11 revfid clc 2:")
+  field(CALC,  "((B&0xFC00)>>10)+A")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Cnt:Fid1Ev11  ")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Val:Word0-I")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Cnt:FidEvt11 PP")
+}
+
+record(ao,     "$(S1){$(D1)-$(SD7)}Cnt:FidEvt11") {
+  field(DESC,  "Evt:11 revfid cnt:")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Evt:11t1-Calc")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Evt:11t1-Calc") {
+  field(DESC,  "Evt:11 t1 clc:")
+  field(CALC,  "(A&0x03FF)/B")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Val:Word0-I")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Cnt:ClkTurn")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Evt:11-t1_ PP")
+}
+
+record(ao,     "$(S1){$(D1)-$(SD7)}Evt:11-t1_") {
+  field(DESC,  "Evt:11 t1:")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:BktEv11-Calc")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Cnt:BktEv11-Calc") {
+  field(DESC,  "Evt:11 buckets clc:")
+  field(CALC,  "(A-FLOOR(A))*B")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Evt:11-t1_")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Cnt:Harmonic")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Cnt:BktEvt11 PP")
+}
+
+record(ao,     "$(S1){$(D1)-$(SD7)}Cnt:BktEvt11") {
+  field(DESC,  "Evt:11 buckets:")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:TrnEv11-Calc")
+}
+
+record(calcout, "$(S1){$(D1)-$(SD7)}Cnt:TrnEv11-Calc") {
+  field(DESC,   "Evt:11 turns clc:")
+  field(CALC,   "FLOOR(A)")
+  field(INPA,   "$(S1){$(D1)-$(SD7)}Evt:11-t1_")
+  field(OUT,    "$(S1){$(D1)-$(SD7)}Cnt:TurnEvt11 PP")
+}
+
+record(ao,      "$(S1){$(D1)-$(SD7)}Cnt:TurnEvt11") {
+  field(DESC,   "Evt:11 turns:")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Evt:11Nxt")
+}
+
+#---------------------------------------------------------------------
+# TSNext - Advance the events in the stack
+#---------------------------------------------------------------------
+# Obs! TrigOut:TSNext advances the stack pointer too!
+#---------------------------------------------------------------------
+
+record(bo,      "$(S1){$(D1)-$(SD7)}Evt:11Nxt") {
+  field(DESC,   "Evt:11 TSNext:")
+  field(DTYP,   "asynInt32")
+  field(OUT ,   "@asyn($(PORT),0)TrigIn:EP41_08")
+  field(VAL ,   "1")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Cnt:020Nxt")
+}
+
+#---------------------------------------------------------------------
+# BNL LLRF Controller TripStack Event Template
+#---------------------------------------------------------------------
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Evt:12-Calc") {
+  field(CALC,  "(A & 0x0E00)>>9")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Val:Word2-I")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Src:Evt12 PP")
+}
+
+record(mbbo,   "$(S1){$(D1)-$(SD7)}Src:Evt12") {
+  field(DESC,  "Evt:12 Src:")
+  field(ZRST,  "RFInhibit")
+  field(ONST,  "PPS")
+  field(TWST,  "Vacuum")
+  field(THST,  "Soft trip")
+  field(FRST,  "Quench")
+  field(FVST,  "Limiter")
+  field(SXST,  "AVAGO2")
+  field(SVST,  "Noname")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:Fid1Ev12")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Cnt:Fid1Ev12") {
+  field(DESC,  "Evt:12 revfid clc 1:")
+  field(CALC,  "((((A&0x1FF)<<16)+B)<<6)")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Val:Word2-I")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Val:Word1-I")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:Fid2Ev12")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Cnt:Fid2Ev12") {
+  field(DESC,  "Evt:12 revfid clc 2:")
+  field(CALC,  "((B&0xFC00)>>10)+A")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Cnt:Fid1Ev12  ")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Val:Word0-I")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Cnt:FidEvt12 PP")
+}
+
+record(ao,     "$(S1){$(D1)-$(SD7)}Cnt:FidEvt12") {
+  field(DESC,  "Evt:12 revfid cnt:")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Evt:12t1-Calc")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Evt:12t1-Calc") {
+  field(DESC,  "Evt:12 t1 clc:")
+  field(CALC,  "(A&0x03FF)/B")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Val:Word0-I")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Cnt:ClkTurn")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Evt:12-t1_ PP")
+}
+
+record(ao,     "$(S1){$(D1)-$(SD7)}Evt:12-t1_") {
+  field(DESC,  "Evt:12 t1:")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:BktEv12-Calc")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Cnt:BktEv12-Calc") {
+  field(DESC,  "Evt:12 buckets clc:")
+  field(CALC,  "(A-FLOOR(A))*B")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Evt:12-t1_")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Cnt:Harmonic")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Cnt:BktEvt12 PP")
+}
+
+record(ao,     "$(S1){$(D1)-$(SD7)}Cnt:BktEvt12") {
+  field(DESC,  "Evt:12 buckets:")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:TrnEv12-Calc")
+}
+
+record(calcout, "$(S1){$(D1)-$(SD7)}Cnt:TrnEv12-Calc") {
+  field(DESC,   "Evt:12 turns clc:")
+  field(CALC,   "FLOOR(A)")
+  field(INPA,   "$(S1){$(D1)-$(SD7)}Evt:12-t1_")
+  field(OUT,    "$(S1){$(D1)-$(SD7)}Cnt:TurnEvt12 PP")
+}
+
+record(ao,      "$(S1){$(D1)-$(SD7)}Cnt:TurnEvt12") {
+  field(DESC,   "Evt:12 turns:")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Evt:12Nxt")
+}
+
+#---------------------------------------------------------------------
+# TSNext - Advance the events in the stack
+#---------------------------------------------------------------------
+# Obs! TrigOut:TSNext advances the stack pointer too!
+#---------------------------------------------------------------------
+
+record(bo,      "$(S1){$(D1)-$(SD7)}Evt:12Nxt") {
+  field(DESC,   "Evt:12 TSNext:")
+  field(DTYP,   "asynInt32")
+  field(OUT ,   "@asyn($(PORT),0)TrigIn:EP41_08")
+  field(VAL ,   "1")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Cnt:020Nxt")
+}
+
+#---------------------------------------------------------------------
+# BNL LLRF Controller TripStack Event Template
+#---------------------------------------------------------------------
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Evt:13-Calc") {
+  field(CALC,  "(A & 0x0E00)>>9")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Val:Word2-I")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Src:Evt13 PP")
+}
+
+record(mbbo,   "$(S1){$(D1)-$(SD7)}Src:Evt13") {
+  field(DESC,  "Evt:13 Src:")
+  field(ZRST,  "RFInhibit")
+  field(ONST,  "PPS")
+  field(TWST,  "Vacuum")
+  field(THST,  "Soft trip")
+  field(FRST,  "Quench")
+  field(FVST,  "Limiter")
+  field(SXST,  "AVAGO2")
+  field(SVST,  "Noname")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:Fid1Ev13")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Cnt:Fid1Ev13") {
+  field(DESC,  "Evt:13 revfid clc 1:")
+  field(CALC,  "((((A&0x1FF)<<16)+B)<<6)")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Val:Word2-I")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Val:Word1-I")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:Fid2Ev13")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Cnt:Fid2Ev13") {
+  field(DESC,  "Evt:13 revfid clc 2:")
+  field(CALC,  "((B&0xFC00)>>10)+A")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Cnt:Fid1Ev13  ")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Val:Word0-I")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Cnt:FidEvt13 PP")
+}
+
+record(ao,     "$(S1){$(D1)-$(SD7)}Cnt:FidEvt13") {
+  field(DESC,  "Evt:13 revfid cnt:")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Evt:13t1-Calc")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Evt:13t1-Calc") {
+  field(DESC,  "Evt:13 t1 clc:")
+  field(CALC,  "(A&0x03FF)/B")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Val:Word0-I")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Cnt:ClkTurn")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Evt:13-t1_ PP")
+}
+
+record(ao,     "$(S1){$(D1)-$(SD7)}Evt:13-t1_") {
+  field(DESC,  "Evt:13 t1:")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:BktEv13-Calc")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Cnt:BktEv13-Calc") {
+  field(DESC,  "Evt:13 buckets clc:")
+  field(CALC,  "(A-FLOOR(A))*B")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Evt:13-t1_")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Cnt:Harmonic")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Cnt:BktEvt13 PP")
+}
+
+record(ao,     "$(S1){$(D1)-$(SD7)}Cnt:BktEvt13") {
+  field(DESC,  "Evt:13 buckets:")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:TrnEv13-Calc")
+}
+
+record(calcout, "$(S1){$(D1)-$(SD7)}Cnt:TrnEv13-Calc") {
+  field(DESC,   "Evt:13 turns clc:")
+  field(CALC,   "FLOOR(A)")
+  field(INPA,   "$(S1){$(D1)-$(SD7)}Evt:13-t1_")
+  field(OUT,    "$(S1){$(D1)-$(SD7)}Cnt:TurnEvt13 PP")
+}
+
+record(ao,      "$(S1){$(D1)-$(SD7)}Cnt:TurnEvt13") {
+  field(DESC,   "Evt:13 turns:")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Evt:13Nxt")
+}
+
+#---------------------------------------------------------------------
+# TSNext - Advance the events in the stack
+#---------------------------------------------------------------------
+# Obs! TrigOut:TSNext advances the stack pointer too!
+#---------------------------------------------------------------------
+
+record(bo,      "$(S1){$(D1)-$(SD7)}Evt:13Nxt") {
+  field(DESC,   "Evt:13 TSNext:")
+  field(DTYP,   "asynInt32")
+  field(OUT ,   "@asyn($(PORT),0)TrigIn:EP41_08")
+  field(VAL ,   "1")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Cnt:020Nxt")
+}
+
+#---------------------------------------------------------------------
+# BNL LLRF Controller TripStack Event Template
+#---------------------------------------------------------------------
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Evt:14-Calc") {
+  field(CALC,  "(A & 0x0E00)>>9")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Val:Word2-I")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Src:Evt14 PP")
+}
+
+record(mbbo,   "$(S1){$(D1)-$(SD7)}Src:Evt14") {
+  field(DESC,  "Evt:14 Src:")
+  field(ZRST,  "RFInhibit")
+  field(ONST,  "PPS")
+  field(TWST,  "Vacuum")
+  field(THST,  "Soft trip")
+  field(FRST,  "Quench")
+  field(FVST,  "Limiter")
+  field(SXST,  "AVAGO2")
+  field(SVST,  "Noname")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:Fid1Ev14")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Cnt:Fid1Ev14") {
+  field(DESC,  "Evt:14 revfid clc 1:")
+  field(CALC,  "((((A&0x1FF)<<16)+B)<<6)")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Val:Word2-I")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Val:Word1-I")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:Fid2Ev14")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Cnt:Fid2Ev14") {
+  field(DESC,  "Evt:14 revfid clc 2:")
+  field(CALC,  "((B&0xFC00)>>10)+A")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Cnt:Fid1Ev14  ")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Val:Word0-I")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Cnt:FidEvt14 PP")
+}
+
+record(ao,     "$(S1){$(D1)-$(SD7)}Cnt:FidEvt14") {
+  field(DESC,  "Evt:14 revfid cnt:")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Evt:14t1-Calc")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Evt:14t1-Calc") {
+  field(DESC,  "Evt:14 t1 clc:")
+  field(CALC,  "(A&0x03FF)/B")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Val:Word0-I")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Cnt:ClkTurn")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Evt:14-t1_ PP")
+}
+
+record(ao,     "$(S1){$(D1)-$(SD7)}Evt:14-t1_") {
+  field(DESC,  "Evt:14 t1:")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:BktEv14-Calc")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Cnt:BktEv14-Calc") {
+  field(DESC,  "Evt:14 buckets clc:")
+  field(CALC,  "(A-FLOOR(A))*B")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Evt:14-t1_")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Cnt:Harmonic")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Cnt:BktEvt14 PP")
+}
+
+record(ao,     "$(S1){$(D1)-$(SD7)}Cnt:BktEvt14") {
+  field(DESC,  "Evt:14 buckets:")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:TrnEv14-Calc")
+}
+
+record(calcout, "$(S1){$(D1)-$(SD7)}Cnt:TrnEv14-Calc") {
+  field(DESC,   "Evt:14 turns clc:")
+  field(CALC,   "FLOOR(A)")
+  field(INPA,   "$(S1){$(D1)-$(SD7)}Evt:14-t1_")
+  field(OUT,    "$(S1){$(D1)-$(SD7)}Cnt:TurnEvt14 PP")
+}
+
+record(ao,      "$(S1){$(D1)-$(SD7)}Cnt:TurnEvt14") {
+  field(DESC,   "Evt:14 turns:")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Evt:14Nxt")
+}
+
+#---------------------------------------------------------------------
+# TSNext - Advance the events in the stack
+#---------------------------------------------------------------------
+# Obs! TrigOut:TSNext advances the stack pointer too!
+#---------------------------------------------------------------------
+
+record(bo,      "$(S1){$(D1)-$(SD7)}Evt:14Nxt") {
+  field(DESC,   "Evt:14 TSNext:")
+  field(DTYP,   "asynInt32")
+  field(OUT ,   "@asyn($(PORT),0)TrigIn:EP41_08")
+  field(VAL ,   "1")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Cnt:020Nxt")
+}
+
+#---------------------------------------------------------------------
+# BNL LLRF Controller TripStack Event Template
+#---------------------------------------------------------------------
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Evt:15-Calc") {
+  field(CALC,  "(A & 0x0E00)>>9")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Val:Word2-I")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Src:Evt15 PP")
+}
+
+record(mbbo,   "$(S1){$(D1)-$(SD7)}Src:Evt15") {
+  field(DESC,  "Evt:15 Src:")
+  field(ZRST,  "RFInhibit")
+  field(ONST,  "PPS")
+  field(TWST,  "Vacuum")
+  field(THST,  "Soft trip")
+  field(FRST,  "Quench")
+  field(FVST,  "Limiter")
+  field(SXST,  "AVAGO2")
+  field(SVST,  "Noname")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:Fid1Ev15")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Cnt:Fid1Ev15") {
+  field(DESC,  "Evt:15 revfid clc 1:")
+  field(CALC,  "((((A&0x1FF)<<16)+B)<<6)")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Val:Word2-I")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Val:Word1-I")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:Fid2Ev15")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Cnt:Fid2Ev15") {
+  field(DESC,  "Evt:15 revfid clc 2:")
+  field(CALC,  "((B&0xFC00)>>10)+A")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Cnt:Fid1Ev15  ")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Val:Word0-I")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Cnt:FidEvt15 PP")
+}
+
+record(ao,     "$(S1){$(D1)-$(SD7)}Cnt:FidEvt15") {
+  field(DESC,  "Evt:15 revfid cnt:")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Evt:15t1-Calc")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Evt:15t1-Calc") {
+  field(DESC,  "Evt:15 t1 clc:")
+  field(CALC,  "(A&0x03FF)/B")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Val:Word0-I")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Cnt:ClkTurn")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Evt:15-t1_ PP")
+}
+
+record(ao,     "$(S1){$(D1)-$(SD7)}Evt:15-t1_") {
+  field(DESC,  "Evt:15 t1:")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:BktEv15-Calc")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD7)}Cnt:BktEv15-Calc") {
+  field(DESC,  "Evt:15 buckets clc:")
+  field(CALC,  "(A-FLOOR(A))*B")
+  field(INPA,  "$(S1){$(D1)-$(SD7)}Evt:15-t1_")
+  field(INPB,  "$(S1){$(D1)-$(SD7)}Cnt:Harmonic")
+  field(OUT,   "$(S1){$(D1)-$(SD7)}Cnt:BktEvt15 PP")
+}
+
+record(ao,     "$(S1){$(D1)-$(SD7)}Cnt:BktEvt15") {
+  field(DESC,  "Evt:15 buckets:")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:TrnEv15-Calc")
+}
+
+record(calcout, "$(S1){$(D1)-$(SD7)}Cnt:TrnEv15-Calc") {
+  field(DESC,   "Evt:15 turns clc:")
+  field(CALC,   "FLOOR(A)")
+  field(INPA,   "$(S1){$(D1)-$(SD7)}Evt:15-t1_")
+  field(OUT,    "$(S1){$(D1)-$(SD7)}Cnt:TurnEvt15 PP")
+}
+
+record(ao,      "$(S1){$(D1)-$(SD7)}Cnt:TurnEvt15") {
+  field(DESC,   "Evt:15 turns:")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Evt:15Nxt")
+}
+
+#---------------------------------------------------------------------
+# TSNext - Advance the events in the stack
+#---------------------------------------------------------------------
+# Obs! TrigOut:TSNext advances the stack pointer too!
+#---------------------------------------------------------------------
+
+record(bo,      "$(S1){$(D1)-$(SD7)}Evt:15Nxt") {
+  field(DESC,   "Evt:15 TSNext:")
+  field(DTYP,   "asynInt32")
+  field(OUT ,   "@asyn($(PORT),0)TrigIn:EP41_08")
+  field(VAL ,   "1")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Cnt:020Nxt")
+}
+

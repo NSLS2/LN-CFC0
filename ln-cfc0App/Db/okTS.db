@@ -1,0 +1,340 @@
+# TripStack
+
+record(longout, "$(S1){$(D1)-$(SD7)}Cnt:Harmonic") {
+  field(DESC,   "Machine harmonic No:")
+  field(VAL,    "1320")
+  field(PINI,   "YES")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Cnt:ClkFid")
+}
+
+record(longout, "$(S1){$(D1)-$(SD7)}Cnt:ClkFid") {
+  field(DESC,   "Clocks per fiducial:")
+  field(VAL,    "528")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Cnt:Turn")
+}
+
+record(longout, "$(S1){$(D1)-$(SD7)}Cnt:Turn") {
+  field(DESC,   "Turns:")
+  field(VAL,    "5")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Cnt:ClkTurn")
+}
+
+record(calc,    "$(S1){$(D1)-$(SD7)}Cnt:ClkTurn") {
+  field(DESC,   "LLRF clks per turn:")
+  field(CALC,   "A/B")
+  field(INPA,   "$(S1){$(D1)-$(SD7)}Cnt:ClkFid")
+  field(INPB,   "$(S1){$(D1)-$(SD7)}Cnt:Turn")
+}
+
+record(calc,    "$(S1){$(D1)-$(SD7)}Sts:Armed-Calc") {
+  field(DESC,   "TripStack: Armcalc:")
+  field(CALC,   "(A & B)")
+  field(INPA,   "$(S1){$(D1)}DI:Ep2F-I")
+  field(INPB,   "2")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Sts:Armed")
+}
+
+record(bo,      "$(S1){$(D1)-$(SD7)}Sts:Armed") {
+  field(DESC,   "Is armed:")
+  field(DOL,    "$(S1){$(D1)-$(SD7)}Sts:Armed-Calc")
+  field(OMSL,   "closed_loop")
+  field(ZNAM,   "No")
+  field(ONAM,   "Yes")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Cnt:Calc")
+}
+
+record(calc,    "$(S1){$(D1)-$(SD7)}Cnt:Calc") {
+  field(DESC,   "Count:")
+  field(CALC,   "(A & B) >> 2")
+  field(INPA,   "$(S1){$(D1)}DI:Ep2F-I")
+  field(INPB,   "60")
+}
+
+# Trigger okUsbFrontPanel_ActivateTriggerIn(H, EP_ACTIONS_EP0x41, 0x08)
+# 15-count times, see: MATLAB file TripStack.m
+
+record(calcout, "$(S1){$(D1)-$(SD7)}Cmd:Read" ) {
+  field(DESC,   "Set cnt:")
+  field(CALC,   "1")
+  field(OUT,    "$(S1){$(D1)-$(SD7)}Sts:Next PP")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Cnt:Next-Calc")
+}
+
+record(calcout, "$(S1){$(D1)-$(SD7)}Cnt:Next-Calc" ) {
+  field(DESC,   "Set cnt:")
+  field(CALC,   "15-B")
+  field(INPB,   "$(S1){$(D1)-$(SD7)}Cnt:Calc")
+  field(OUT,    "$(S1){$(D1)-$(SD7)}Cnt:Next1 PP")
+}
+
+record(longout, "$(S1){$(D1)-$(SD7)}Cnt:Next1") {
+  field(DESC,   "Next cnt:")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Trig:Next-Cmd")
+}
+
+# Should be linked back from the TrigIn:Next which advances the stack counter!
+
+record(calcout, "$(S1){$(D1)-$(SD7)}Cnt:Nxt1-Calc") {
+  field(CALC,   "(A>0)?(A-1):0")
+  field(INPA,   "$(S1){$(D1)-$(SD7)}Cnt:Next1")
+  field(OUT,    "$(S1){$(D1)-$(SD7)}Cnt:Next1")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Cnt:Mask-Calc")
+}
+
+record(calc,    "$(S1){$(D1)-$(SD7)}Cnt:Mask-Calc") {
+  field(CALC,   "A?0:1")
+  field(INPA,   "$(S1){$(D1)-$(SD7)}Cnt:Next1")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}State:010")
+}
+
+record(seq,     "$(S1){$(D1)-$(SD7)}State:010") {
+  field(SELM,   "Mask")
+  field(SELL,   "$(S1){$(D1)-$(SD7)}Cnt:Mask-Calc")
+  field(DO1,    "0")
+  field(LNK1,   "$(S1){$(D1)-$(SD7)}Sts:Next PP MSS")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Cnt:Nxt2-Calc")
+}
+
+record(calcout, "$(S1){$(D1)-$(SD7)}Cnt:Nxt2-Calc") {
+  field(DESC,   "Decr:")
+  field(CALC,   "(A>0)?1:0")
+  field(INPA,   "$(S1){$(D1)-$(SD7)}Cnt:Next1.VAL NPP")
+  field(OOPT,   "When Non-zero")
+  field(OUT,    "$(S1){$(D1)-$(SD7)}Cnt:Next1.PROC CA")
+}
+
+record(bo,      "$(S1){$(D1)-$(SD7)}Sts:Next") {
+  field(DESC,   "TS Next done:")
+  field(ZNAM,   "Idle")
+  field(ONAM,   "TS Next")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}State:020")
+}
+
+record(calcout, "$(S1){$(D1)-$(SD7)}State:020") {
+  field(CALC,   "A")
+  field(INPA,   "$(S1){$(D1)-$(SD7)}Sts:Next")
+  field(OOPT,   "Transition To Zero")
+  field(OUT,    "$(S1){$(D1)-$(SD7)}State:030.PROC CA")
+}
+
+#
+# Pushbutton TripStack Read advances the stack counter in Loop-1
+# -then sets the TS:Loop2-Cmd to count for counting the "big" Loop-2
+# STACK READ LOOP2 STARTS HERE!
+#
+
+record(calcout, "$(S1){$(D1)-$(SD7)}State:030") {
+  field(DESC,   "Set loop running:")
+  field(CALC,   "1")
+  field(OUT,    "$(S1){$(D1)-$(SD7)}Sts:020Run PP")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Cnt:1-Calc")
+}
+
+record(calcout, "$(S1){$(D1)-$(SD7)}Cnt:1-Calc") {
+  field(DESC,   "Loop2: Set cnt:")
+  field(CALC,   "A")
+  field(INPA,   "$(S1){$(D1)-$(SD7)}Cnt:Calc")
+  field(OUT,    "$(S1){$(D1)-$(SD7)}Cnt:020 ")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Cnt:2-Calc")
+}
+
+record(calcout, "$(S1){$(D1)-$(SD7)}Cnt:2-Calc") {
+  field(DESC,   "Loop2: Reset inc<10 cnt:")
+  field(CALC,   "1")
+  field(OUT,    "$(S1){$(D1)-$(SD7)}Cnt:01Inc")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Cnt:10-Calc")
+}
+
+record(calcout, "$(S1){$(D1)-$(SD7)}Cnt:10-Calc") {
+  field(DESC,   "Loop2: Reset inc>10 cnt:")
+  field(CALC,   "0")
+  field(INPA,   "$(S1){$(D1)-$(SD7)}Cnt:Calc")
+  field(OUT,    "$(S1){$(D1)-$(SD7)}Cnt:10Inc")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Cnt:020")
+}
+
+record(longout, "$(S1){$(D1)-$(SD7)}Cnt:020") {
+# Counts down
+  field(DESC,   "Lop2: Next cnt")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Cnt:01Inc")
+}
+
+record(longout, "$(S1){$(D1)-$(SD7)}Cnt:01Inc") {
+# Counts up
+  field(DESC,   "Lop2: Cnt 1->10:")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Cnt:10Inc")
+}
+
+record(longout, "$(S1){$(D1)-$(SD7)}Cnt:10Inc") {
+# Counts up-10
+  field(DESC,   "Lop2: Cnt 10->...:")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Cmd:RdAll")
+}
+
+#---------------------------------------------------------------------
+#
+#---------------------------------------------------------------------
+
+record(longout, "$(S1){$(D1)-$(SD7)}Cmd:RdAll") {
+  field(DTYP,   "asynInt32")
+  field(DESC,   "TSWord0 direct:")
+  field(OUT,    "@asyn($(PORT),0)TS RdAll")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Val:Word0-I")
+}
+
+record(longin,  "$(S1){$(D1)-$(SD7)}Val:Word0-I") {
+  field(DTYP,   "asynInt32")
+  field(DESC,   "Word [0]:")
+  field(INP ,   "@asyn($(PORT),0)TS Word0 1")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Val:Word1-I")
+}
+
+record(longin,  "$(S1){$(D1)-$(SD7)}Val:Word1-I") {
+  field(DTYP,   "asynInt32")
+  field(DESC,   "Word [1]:")
+  field(INP ,   "@asyn($(PORT),0)TS Word1 0")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Val:Word2-I")
+}
+
+record(longin,  "$(S1){$(D1)-$(SD7)}Val:Word2-I") {
+  field(DTYP,   "asynInt32")
+  field(DESC,   "Word [2]:")
+  field(INP ,   "@asyn($(PORT),0)TS Word2 0")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Evt:Sel-Calc")
+}
+
+#---------------------------------------------------------------------
+# Setup mask to select which event chain to process
+#---------------------------------------------------------------------
+
+record(calc,    "$(S1){$(D1)-$(SD7)}Evt:Sel-Calc") {
+  field(DESC,   "Event count <>10:")
+  field(CALC,   "(A<=10)?1:2")
+  field(INPA,   "$(S1){$(D1)-$(SD7)}Cnt:01Inc")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}State:SelEvt0")
+}
+
+record(seq,     "$(S1){$(D1)-$(SD7)}State:SelEvt0") {
+  field(SELM,   "Mask")
+  field(SELL,   "$(S1){$(D1)-$(SD7)}Evt:Sel-Calc")
+  field(DO1,    "1")
+  field(LNK1,   "$(S1){$(D1)-$(SD7)}State:SelEvt1.PROC CPP")
+  field(DO2,    "1")
+  field(LNK2,   "$(S1){$(D1)-$(SD7)}State:SelEvt2.PROC CPP")
+}
+
+record(seq,   "$(S1){$(D1)-$(SD7)}State:SelEvt1") {
+  field(SELM, "Specified")
+  field(SELL, "$(S1){$(D1)-$(SD7)}Cnt:01Inc")
+  field(DO1,  "1")
+  field(LNK1, "$(S1){$(D1)-$(SD7)}Evt:00-Calc.PROC CPP")
+  field(DO2,  "1")
+  field(LNK2, "$(S1){$(D1)-$(SD7)}Evt:01-Calc.PROC CPP")
+  field(DO3,  "1")
+  field(LNK3, "$(S1){$(D1)-$(SD7)}Evt:02-Calc.PROC CPP")
+  field(DO4,  "1")
+  field(LNK4, "$(S1){$(D1)-$(SD7)}Evt:03-Calc.PROC CPP")
+  field(DO5,  "1")
+  field(LNK5, "$(S1){$(D1)-$(SD7)}Evt:04-Calc.PROC CPP")
+  field(DO6,  "1")
+  field(LNK6, "$(S1){$(D1)-$(SD7)}Evt:05-Calc.PROC CPP")
+  field(DO7,  "1")
+  field(LNK7, "$(S1){$(D1)-$(SD7)}Evt:06-Calc.PROC CPP")
+  field(DO8,  "1")
+  field(LNK8, "$(S1){$(D1)-$(SD7)}Evt:07-Calc.PROC CPP")
+  field(DO9,  "1")
+  field(LNK9, "$(S1){$(D1)-$(SD7)}Evt:08-Calc.PROC CPP")
+  field(DOA,  "1")
+  field(LNKA, "$(S1){$(D1)-$(SD7)}Evt:09-Calc.PROC CPP")
+}
+
+record(seq,  "$(S1){$(D1)-$(SD7)}State:SelEvt2") {
+  field(SELM, "Specified")
+  field(SELL, "$(S1){$(D1)-$(SD7)}Cnt:10Inc")
+  field(DO1,  "1")
+  field(LNK1, "$(S1){$(D1)-$(SD7)}Evt:10-Calc.PROC CPP")
+  field(DO2,  "1")
+  field(LNK2, "$(S1){$(D1)-$(SD7)}Evt:11-Calc.PROC CPP")
+  field(DO3,  "1")
+  field(LNK3, "$(S1){$(D1)-$(SD7)}Evt:12-Calc.PROC CPP")
+  field(DO4,  "1")
+  field(LNK4, "$(S1){$(D1)-$(SD7)}Evt:13-Calc.PROC CPP")
+  field(DO5,  "1")
+  field(LNK5, "$(S1){$(D1)-$(SD7)}Evt:14-Calc.PROC CPP")
+  field(DO6,  "1")
+  field(LNK6, "$(S1){$(D1)-$(SD7)}Evt:15-Calc.PROC CPP")
+}
+
+#---------------------------------------------------------------------
+# CALC values, turns, buckets
+#---------------------------------------------------------------------
+# File okTSEvent.db <= (okTSEvent.template + okTSEvent.substitutions)
+#---------------------------------------------------------------
+# Link back to TS RdAll which reads all the TSWords but updates only once!
+#---------------------------------------------------------------------
+
+record(calcout, "$(S1){$(D1)-$(SD7)}Cnt:020Nxt") {
+  field(CALC,   "(A>0)?(A-1):0")
+  field(INPA,   "$(S1){$(D1)-$(SD7)}Cnt:020")
+  field(OUT,    "$(S1){$(D1)-$(SD7)}Cnt:020")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Cnt:01Inc-Calc")
+}
+
+#---------------------------------------------------------------------
+
+record(calcout, "$(S1){$(D1)-$(SD7)}Cnt:01Inc-Calc") {
+  field(CALC,   "(A+1)")
+  field(INPA,   "$(S1){$(D1)-$(SD7)}Cnt:01Inc")
+  field(OUT,    "$(S1){$(D1)-$(SD7)}Cnt:01Inc")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Cnt:10Inc-Calc")
+}
+
+#---------------------------------------------------------------------
+
+record(calcout, "$(S1){$(D1)-$(SD7)}Cnt:10Inc-Calc") {
+  field(CALC,   "(A>10)?(A-10):0")
+  field(INPA,   "$(S1){$(D1)-$(SD7)}Cnt:10Inc")
+  field(OUT,    "$(S1){$(D1)-$(SD7)}Cnt:10Inc")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Cnt:Msk2-Calc")
+}
+
+#---------------------------------------------------------------------
+
+record(calc,    "$(S1){$(D1)-$(SD7)}Cnt:Msk2-Calc") {
+  field(CALC,   "A?0:1")
+  field(INPA,   "$(S1){$(D1)-$(SD7)}Cnt:020")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}State:040")
+}
+
+record(seq,     "$(S1){$(D1)-$(SD7)}State:040") {
+  field(SELM,   "Mask")
+  field(SELL,   "$(S1){$(D1)-$(SD7)}Cnt:Msk2-Calc  ")
+  field(DO1,    "0")
+  field(LNK1,   "$(S1){$(D1)-$(SD7)}Sts:020Run PP MSS")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Cnt:040Nxt")
+}
+
+record(calcout, "$(S1){$(D1)-$(SD7)}Cnt:040Nxt") {
+  field(DESC,   "Decr:")
+  field(CALC,   "(A>0)?1:0")
+  field(INPA,   "$(S1){$(D1)-$(SD7)}Cnt:020.VAL NPP")
+  field(OOPT,   "When Non-zero")
+  field(OUT,    "$(S1){$(D1)-$(SD7)}Cnt:020.PROC CA")
+}
+
+record(bo,     "$(S1){$(D1)-$(SD7)}Sts:020Run") {
+  field(DESC,  "TS Loop 2:")
+  field(ZNAM,  "Idle")
+  field(ONAM,  "Run")
+  field(FLNK,  "$(S1){$(D1)-$(SD7)}Cnt:050-Calc")
+}
+
+record(calcout, "$(S1){$(D1)-$(SD7)}Cnt:050-Calc") {
+  field(CALC,   "A")
+  field(INPA,   "$(S1){$(D1)-$(SD7)}Sts:020Run")
+  field(OOPT,   "Transition To Zero")
+# field(OUT,    "$(S1){$(D1)-$(SD7)}TS:Lop-2_Cnt-I.PROC CA")
+}
+#---------------------------------------------------------------------
+
+

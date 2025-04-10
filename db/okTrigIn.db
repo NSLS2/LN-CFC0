@@ -1,0 +1,310 @@
+record(bo,      "$(S1){$(D1)}Trig:InhRF-Cmd") {
+  field(DESC,   "Set RF Inhibit")
+  field(FLNK,   "$(S1){$(D1)}Trig:InhRF")
+}
+
+record(longout, "$(S1){$(D1)}Trig:InhRF") {
+  field(DTYP,   "asynInt32")
+  field(DESC,   "Set RF inhibit!")
+  field(VAL,    "9")
+  field(OUT ,   "@asyn($(PORT),0)TrigIn:EP40_09")
+}
+
+record(bo,      "$(S1){$(D1)}Rst:InhRF-Cmd") {
+  field(DESC,   "Reset RF inhibit")
+  field(FLNK,   "$(S1){$(D1)}Rst:InhRF")
+}
+
+record(longout, "$(S1){$(D1)}Rst:InhRF") {
+  field(DTYP,   "asynInt32")
+  field(DESC,   "Reset")
+  field(VAL,    "10")
+  field(OUT ,   "@asyn($(PORT),0)TrigIn:EP40_0a")
+}
+
+record(bo,      "$(S1){$(D1)}Trig:AV2-Cmd") {
+  field(DESC,   "Set AVAGO2")
+  field(FLNK,   "$(S1){$(D1)}Trig:AVAGO2")
+}
+
+record(longout, "$(S1){$(D1)}Trig:AVAGO2") {
+  field(DTYP,   "asynInt32")
+  field(DESC,   "Set AVAGO2!")
+  field(VAL,    "4")
+  field(OUT ,   "@asyn($(PORT),0)TrigIn:EP41_04")
+}
+
+record(bo,      "$(S1){$(D1)}Rst:AV2-Cmd") {
+  field(DESC,   "Reset AVAGO2")
+  field(FLNK,   "$(S1){$(D1)}Rst:AVAGO2")
+}
+
+record(longout, "$(S1){$(D1)}Rst:AVAGO2") {
+  field(DTYP,   "asynInt32")
+  field(DESC,   "Reset")
+  field(VAL,    "5")
+  field(OUT ,   "@asyn($(PORT),0)TrigIn:EP41_05")
+}
+
+record(bo,      "$(S1){$(D1)}Trig:SoftTrip-Cmd") {
+  field(DESC,   "Set Soft Trip")
+  field(FLNK,   "$(S1){$(D1)}Trig:SoftTrip")
+}
+
+record(longout, "$(S1){$(D1)}Trig:SoftTrip") {
+  field(DTYP,   "asynInt32")
+  field(DESC,   "Soft trip!")
+  field(VAL,    "1")
+  field(OUT ,   "@asyn($(PORT),0)TrigIn:EP40_01")
+}
+
+record(bo,      "$(S1){$(D1)}Rst:SoftTrip-Cmd") {
+  field(DESC,   "Reset Soft Trip")
+  field(FLNK,   "$(S1){$(D1)}Rst:SoftTrip")
+}
+
+record(longout, "$(S1){$(D1)}Rst:SoftTrip") {
+  field(DTYP,   "asynInt32")
+  field(DESC,   "Reset")
+  field(VAL,    "2")
+  field(OUT ,   "@asyn($(PORT),0)TrigIn:EP40_02")
+}
+
+record(bo,      "$(S1){$(D1)}Trig:VacTrip-Cmd") {
+  field(DESC,   "Set Vacuum Trip")
+  field(FLNK,   "$(S1){$(D1)}Trig:VacTrip")
+}
+
+record(longout, "$(S1){$(D1)}Trig:VacTrip") {
+  field(DTYP,   "asynInt32")
+  field(DESC,   "Vacuum Trip!")
+  field(VAL,    "0")
+  field(OUT ,   "@asyn($(PORT),0)TrigIn:EP41_00")
+}
+
+record(bo,      "$(S1){$(D1)}Rst:VacTrip-Cmd") {
+  field(DESC,   "Reset Vacuum Trip")
+  field(FLNK,   "$(S1){$(D1)}Rst:VacTrip")
+}
+
+record(longout, "$(S1){$(D1)}Rst:VacTrip") {
+  field(DTYP,   "asynInt32")
+  field(DESC,   "Reset")
+  field(VAL,    "1")
+  field(OUT ,   "@asyn($(PORT),0)TrigIn:EP41_01")
+}
+
+record(bo,      "$(S1){$(D1)}Trig:PPS-Cmd") {
+  field(DESC,   "Set PPS Trip")
+  field(FLNK,   "$(S1){$(D1)}Trig:PPS")
+}
+
+record(longout, "$(S1){$(D1)}Trig:PPS") {
+  field(DTYP,   "asynInt32")
+  field(DESC,   "PPS Trip!")
+  field(VAL,    "2")
+  field(OUT ,   "@asyn($(PORT),0)TrigIn:EP41_02")
+}
+
+record(bo,      "$(S1){$(D1)}Rst:PPS-Cmd") {
+  field(DESC,   "Reset PPS")
+  field(FLNK,   "$(S1){$(D1)}Rst:PPS")
+}
+
+record(longout, "$(S1){$(D1)}Rst:PPS") {
+  field(DTYP,   "asynInt32")
+  field(DESC,   "Reset")
+  field(VAL,    "3")
+  field(OUT ,   "@asyn($(PORT),0)TrigIn:EP41_03")
+}
+#=======================================================================
+#-----------------------------------------------------------------------
+# SEP. 28, 2020 - NA Start/Stop
+#-----------------------------------------------------------------------
+record(bo,      "$(S1){$(D1)-$(D9)}Trig:Start-Cmd") {
+  field(DESC,   "NA Start!")
+  field(FLNK,   "$(S1){$(D1)-$(D9)}Trig:Start")
+}
+
+record(longout, "$(S1){$(D1)-$(D9)}Trig:Start") {
+  field(DTYP,   "asynInt32")
+  field(DESC,   "NA Start")
+  field(VAL,    "10")
+  field(OUT,    "@asyn($(PORT),0)TrigIn:EP41_0a")
+}
+
+record(bo,      "$(S1){$(D1)-$(D9)}Trig:Stop-Cmd") {
+  field(DESC,   "NA Stop")
+  field(FLNK,   "$(S1){$(D1)-$(D9)}Trig:Stop")
+}
+
+record(longout, "$(S1){$(D1)-$(D9)}Trig:Stop") {
+  field(DTYP,   "asynInt32")
+  field(DESC,   "NA Stop")
+  field(VAL,    "11")
+  field(OUT ,   "@asyn($(PORT),0)TrigIn:EP41_0b")
+}
+#=======================================================================
+#
+# OCT. 14, 2020: C. Marques: Added Pulsed Gain GO!:
+#
+record(bo,      "$(S1){$(D1)-$(DA)}Trig:GO") {
+  field(DESC,   "Trigger Pulsed Gains:")
+  field(HIGH,   "1")
+  field(OUT,    "$(S1){$(D1)-$(DA)}Trig:GO-SP.PROC")
+}
+
+record(longout, "$(S1){$(D1)-$(DA)}Trig:GO-SP") {
+  field(DOL,    "$(S1){$(D1)-$(DA)}Trig:GO")
+  field(OMSL,   "closed_loop")
+  field(DTYP,   "asynInt32")
+  field(DESC,   "Trigger Pulsed Gains")
+  field(OUT ,   "@asyn($(PORT),0)pgGO")
+}
+
+#=======================================================================
+#-----------------------------------------------------------------------
+# AUG. 24, 2016 - Introduced Trigger In for Limiter
+#-----------------------------------------------------------------------
+record(bo,      "$(S1){$(D1)}Trig:Lim-Cmd") {
+  field(DESC,   "Trigger Limiter:")
+  field(FLNK,   "$(S1){$(D1)}Trig:Lim")
+}
+
+record(longout, "$(S1){$(D1)}Trig:Lim") {
+  field(DTYP,   "asynInt32")
+  field(DESC,   "Trigger Limiter")
+  field(VAL,    "2")
+  field(OUT ,   "@asyn($(PORT),0)TrIn:EP41_8000")
+}
+
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+#=======================================================================
+
+record(bo,      "$(S1){$(D1)}Trig:Quench-Cmd") {
+  field(DESC,   "Set Quench")
+  field(FLNK,   "$(S1){$(D1)}Trig:Quench")
+}
+
+record(longout, "$(S1){$(D1)}Trig:Quench") {
+  field(DTYP,   "asynInt32")
+  field(DESC,   "QUENCH!")
+  field(VAL,    "13")
+  field(OUT ,   "@asyn($(PORT),0)TrigIn:EP40_0d")
+}
+
+record(bo,      "$(S1){$(D1)}Rst:Quench-Cmd") {
+  field(DESC,   "Reset Quench")
+  field(FLNK,   "$(S1){$(D1)}Rst:Quench")
+}
+
+record(longout, "$(S1){$(D1)}Rst:Quench") {
+  field(DTYP,   "asynInt32")
+  field(DESC,   "Reset")
+  field(VAL,    "14")
+  field(OUT ,   "@asyn($(PORT),0)TrigIn:EP40_0e")
+}
+
+record(bo,      "$(S1){$(D1)}Trig:CircA-Cmd") {
+  field(DESC,   "CircBufSWTripA:")
+  field(DTYP,   "asynInt32")
+  field(OUT ,   "@asyn($(PORT),0)CircTripA")
+  field(ONAM,   "Trip")
+}
+
+record(bo,      "$(S1){$(D1)}Trig:CircB-Cmd") {
+  field(DESC,   "CircBufSWTripB:")
+  field(DTYP,   "asynInt32")
+  field(OUT ,   "@asyn($(PORT),0)CircTripB")
+  field(ONAM,   "Trip")
+}
+
+#--------------------------------------------
+
+record(bo,      "$(S1){$(D1)-$(SD7)}Trig:Next-Cmd") {
+  field(DESC,   "TSNext:")
+  field(DTYP,   "asynInt32")
+  field(OUT ,   "@asyn($(PORT),0)TrigIn:EP41_08")
+  field(VAL ,   "1")
+  field(FLNK,   "$(S1){$(D1)-$(SD7)}Cnt:Nxt1-Calc")
+}
+
+record(bo,      "$(S1){$(D1)-$(SD7)}Rst:Cmd") {
+  field(DESC,   "TSReset:")
+  field(DTYP,   "asynInt32")
+  field(OUT ,   "@asyn($(PORT),0)TrigIn:EP41_09")
+  field(VAL ,   "1")
+}
+
+#--------------------------------------------
+
+record(bo,      "$(S1){$(D1)}Trig:Ramp-Cmd") {
+  field(DESC,   "FB ramp trigger")
+  field(OUT,    "$(S1){$(D1)}Trig:Ramp PP")
+}
+
+record(longout, "$(S1){$(D1)}Trig:Ramp") {
+  field(DTYP,   "asynInt32")
+  field(OUT ,   "@asyn($(PORT),0)FB RampTrigger")
+}
+#--------------------------------------------
+
+record(seq,    "$(S1){$(D1)}Rst:Trip-Cmd") {
+  field(DESC,  "Reset trips:")
+  field(DO1,   "1")
+  field(LNK1,  "$(S1){$(D1)}Rst:SoftTrip-Cmd PP")
+#-----------------------------------------------------------------------
+# FEB. 2014 - Previous input AVAGO 2 was renamed to RAMP DOWN on the OPI
+#-----------------------------------------------------------------------
+  field(DO2,   "1")
+  field(LNK2,  "$(S1){$(D1)}Rst:AV2-Cmd PP")
+#-----------------------------------------------------------------------
+# FEB. 2014 - Previous input PPS is wired to Vacuum trip on the CFC
+#-----------------------------------------------------------------------
+  field(DO3,   "1")
+  field(LNK3,  "$(S1){$(D1)}Rst:PPS-Cmd PP")
+#-----------------------------------------------------------------------
+# FEB. 2014 - Quench reset renamed to WOut Ep 20 bit 7:
+#-----------------------------------------------------------------------
+#-----------------------------------------------------------------------
+# APR. 2017 - Quench reset will be used for resetting eQuench counters
+# Redirect LNK4 to AV2-Cmd
+#-----------------------------------------------------------------------
+  field(DO4,   "1")
+# field(LNK4,  "$(S1){$(D1)}Rst:Quench-Cmd PP")
+  field(LNK4,  "$(S1){$(D1)}Rst:AV2-Cmd PP")
+#-----------------------------------------------------------------------
+# SEP. 2014 - Should set FF mode to single!
+#-----------------------------------------------------------------------
+  field(DO5,   "0")
+  field(LNK5,  "$(S1){$(D1)-FF}Mode:SP PP")
+#-----------------------------------------------------------------------
+# SEP. 2014 - and disable FF!
+#-----------------------------------------------------------------------
+  field(DO6,   "0")
+  field(LNK6,  "$(S1){$(D1)-FF}Enbl:Cmd PP")
+#-----------------------------------------------------------------------
+# FEB. 2014 - Previous input Vacuum trip renamed to WOut Ep 20 bit 8 on the OPI
+#-----------------------------------------------------------------------
+  field(DO7,   "1")
+  field(LNK7,  "$(S1){$(D1)}Rst:VacTrip-Cmd PP")
+  field(DLY7,  "1.0")
+#-----------------------------------------------------------------------
+# FEB. 2014 - Reset of RF Inhibit should come last!
+#-----------------------------------------------------------------------
+  field(DO8,   "1")
+  field(LNK8,  "$(S1){$(D1)}Rst:InhRF-Cmd PP")
+  field(DLY8,  "2.3")
+  field(FLNK,  "$(S1){$(D1)}Rst:Sc-Cmd")
+}
+
+#-----------------------------------------------------------------------
+# AUG. 2017 - Reset should also reset the scopes!
+#-----------------------------------------------------------------------
+record(seq,    "$(S1){$(D1)}Rst:Sc-Cmd") {
+  field(DESC,  "Reset scopes:")
+  field(DO1,   "1")
+  field(LNK1,  "$(S1){$(Sc)}Rst:Trip-Cmd CPP")
+}
+
+

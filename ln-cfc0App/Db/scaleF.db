@@ -1,0 +1,65 @@
+record(ao,       "$(S1){$(D1)-$(SD2)}E:Scale-SP") {
+  field(DESC,    "Cavity voltage per 100% DAC:")
+  field(VAL,     "2369000.0")
+  field(EGU,     "V")
+  field(PREC,    "3")
+  field(PINI,    "YES")
+  info(autosaveFields_pass1, "VAL")
+  field(FLNK,    "$(S1){$(D1)-$(SD2)}E:Scl-Clc")
+}
+
+record(ao,       "$(S1){$(D1)-Drv}E:Scale-SP") {
+  field(VAL,     "2369000.0")
+  field(EGU,     "V")
+  field(PREC,    "3")
+  field(PINI,    "YES")
+# info(autosaveFields_pass1, "VAL")
+}
+
+record(ao,       "$(S1){$(D1)-Fwd}E:Scale-SP") {
+  field(VAL,     "2369000.0")
+  field(EGU,     "V")
+  field(PREC,    "3")
+  field(PINI,    "YES")
+# info(autosaveFields_pass1, "VAL")
+}
+
+record(ao,       "$(S1){$(D1)-Rfl}E:Scale-SP") {
+  field(VAL,     "2369000.0")
+  field(EGU,     "V")
+  field(PREC,    "3")
+  field(PINI,    "YES")
+# info(autosaveFields_pass1, "VAL")
+}
+
+record(ao,       "$(S1){$(D1)-Ref}E:Scale-SP") {
+  field(VAL,     "2369000.0")
+  field(EGU,     "V")
+  field(PREC,    "3")
+  field(PINI,    "YES")
+# info(autosaveFields_pass1, "VAL")
+}
+
+record(ao,       "$(S1){$(D1)-s1b}E:Scale-SP") {
+  field(VAL,     "2369000.0")
+  field(EGU,     "V")
+  field(PREC,    "3")
+  field(PINI,    "YES")
+# info(autosaveFields_pass1, "VAL")
+}
+
+record(ao,       "$(S1){$(D1)-s2b}E:Scale-SP") {
+  field(VAL,     "2369000.0")
+  field(EGU,     "V")
+  field(PREC,    "3")
+  field(PINI,    "YES")
+# info(autosaveFields_pass1, "VAL")
+}
+
+record(ao,       "$(S1){$(D1)-s3b}E:Scale-SP") {
+  field(VAL,     "2369000.0")
+  field(EGU,     "V")
+  field(PREC,    "3")
+  field(PINI,    "YES")
+# info(autosaveFields_pass1, "VAL")
+}

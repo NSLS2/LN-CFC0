@@ -1,0 +1,42 @@
+record(ao, "$(P)Tuner:PhaOff-SP") {
+	field(DESC, "Phase offset:")
+	field(DRVH, "360.0")
+	field(DRVL, "0")
+	field(HOPR, "360.0")
+ 	field(LOPR, "0")
+	field(OUT , "$(P)Tuner:PhaOff1_")
+	field(FLNK, "$(P)Tuner:PhaOff1_")
+	info(autosaveFields_pass1, "VAL")
+}
+
+record(calc, "$(P)Tuner:PhaOff1_") {
+	field(CALC, "(A*B/C)")
+	field(INPA, "$(P)Tuner:PhaOff-SP")
+	field(INPB, "65535")
+	field(INPC, "$(P)Tuner:PhaOff-SP.DRVH")
+	field(FLNK, "$(P)WireIn:EP0x04_")
+	}
+
+record(longout, "$(P)WireIn:EP0x04_") {
+	field(DTYP, "asynInt32")
+	field(DESC, "Phase offset: ")
+	field(OMSL, "closed_loop")
+	field(DOL,  "$(P)Tuner:PhaOff1_")
+	field(DRVH, "65535")
+	field(DRVL, "0")
+	field(HOPR, "65535")
+	field(LOPR, "0")
+	field(VAL,  "0")
+	field(OUT , "@asyn($(PORT),0)Tuner Ph Offs")
+}
+
+############################################################
+# AUG 24 2015 Ruslan:
+# All PVs that were
+# auto-restored should be re-processed to
+# update values in FPGA
+############################################################
+record(fanout, "$(P)Con:Tuner-Fo") {
+        field(LNK1, "$(P)Tuner:PhaOff-SP")
+}
+

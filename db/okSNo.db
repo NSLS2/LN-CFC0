@@ -1,0 +1,99 @@
+#record(scalcout,  "$(S1){$(D1)}ID:Rd-Calc") {
+#  field(SCAN,     "10 second")
+#  field(CALC,     "AA")
+#  field(INAA,     "$(S1){$(D1)}ID:Serial")
+#  field(OUT,      "$(S1){$(D1)}ID:Rd-I.ZRST PP")
+#}
+
+record(mbbo,      "$(S1){$(D1)}ID:Rd-I") {
+  field(NOBT,     "4")
+  field(ZRVL,     "0")
+  field(ZRST,     "121000031B")
+  field(ONVL,     "1")
+  field(ONST,     "13130005TB")
+  field(TWVL,     "2")
+  field(TWST,     "121000031C")
+  field(THVL,     "3")
+  field(THST,     "13130005SL")
+# field(VAL,      "0")
+# field(OUT,      "$(S1){$(D1)}ID:Cnt PP")
+}
+
+record(aSub,      "$(S1){$(D1)}ID:Wr-ASub")
+{
+  field(INAM,     "okSNoWrInit")
+  field(SNAM,     "okSNoWrProcess")
+#
+  field(FTA,      "STRING")
+  field(NOA,      "16")
+  field(INPA,     "$(S1){$(D1)}ID:Rd-I.ZRST")
+#
+  field(FTB,      "STRING")
+  field(NOB,      "16")
+  field(INPB,     "$(S1){$(D1)}ID:Rd-I.ONST")
+#
+  field(FTC,      "STRING")
+  field(NOC,      "16")
+  field(INPC,     "$(S1){$(D1)}ID:Rd-I.TWST")
+#
+  field(FTD,      "STRING")
+  field(NOD,      "16")
+  field(INPD,     "$(S1){$(D1)}ID:Rd-I.THST")
+#
+  field(FTE,      "STRING")
+  field(NOE,      "16")
+  field(INPE,     "$(S1){$(D1)}ID:Rd-I.FRST")
+#
+  field(FTF,      "STRING")
+  field(NOF,      "16")
+  field(INPF,     "$(S1){$(D1)}ID:Rd-I.FVST")
+#
+  field(FTG,      "STRING")
+  field(NOG,      "16")
+  field(INPG,     "$(S1){$(D1)}ID:Rd-I.SXST")
+#
+  field(FTH,      "STRING")
+  field(NOH,      "16")
+  field(INPH,     "$(S1){$(D1)}ID:Rd-I.SVST")
+#
+  field(FTI,      "STRING")
+  field(NOI,      "16")
+  field(INPI,     "$(S1){$(D1)}ID:Rd-I.EIST")
+#
+  field(FTJ,      "STRING")
+  field(NOJ,      "16")
+  field(INPJ,     "$(S1){$(D1)}ID:Rd-I.NIST")
+#
+  field(FTK,      "STRING")
+  field(NOK,      "16")
+  field(INPK,     "$(S1){$(D1)}ID:Rd-I.TEST")
+#
+  field(FTL,      "STRING")
+  field(NOL,      "16")
+  field(INPL,     "$(S1){$(D1)}ID:Rd-I.ELST")
+#
+  field(FTM,      "STRING")
+  field(NOM,      "16")
+  field(INPM,     "$(S1){$(D1)}ID:Rd-I.TVST")
+#
+  field(FTM,      "STRING")
+  field(NOM,      "16")
+  field(INPM,     "$(S1){$(D1)}ID:Rd-I.TTST")
+#
+  field(FTN,      "STRING")
+  field(NON,      "16")
+  field(INPN,     "$(S1){$(D1)}ID:Rd-I.FTST")
+#
+  field(FTO,      "STRING")
+  field(NOO,      "16")
+  field(INPO,     "$(S1){$(D1)}ID:Rd-I.FFST")
+#
+##field(FTP,      "LONG")
+  field(FTP,      "SHORT")
+  field(NOP,      "1")
+  field(NEP,      "1")
+  field(INPP,     "$(S1){$(D1)}ID:Rd-I")
+##field(INPP,     "$(S1){$(D1)}ID:Cnt")
+}
+
+

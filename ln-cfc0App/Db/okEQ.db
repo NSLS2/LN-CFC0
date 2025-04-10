@@ -1,0 +1,442 @@
+record(ao,     "$(S1){$(D1)-$(SD8)}Val:C1-SP") {
+  field(DESC,  "Const 1:")
+  field(PINI,  "YES")
+  field(VAL,   "3.814687E-6")
+  field(FLNK,  "$(S1){$(D1)-$(SD8)}Val:C2-SP")
+}
+
+record(ao,     "$(S1){$(D1)-$(SD8)}Val:C2-SP") {
+  field(DESC,  "Const 2:")
+  field(VAL,   "0.607253")
+  field(FLNK,  "$(S1){$(D1)-$(SD8)}Val:C3-SP")
+}
+
+record(ao,     "$(S1){$(D1)-$(SD8)}Val:C3-SP") {
+  field(DESC,  "Const 3:")
+  field(PINI,  "YES")
+  field(VAL,   "262144")
+  field(FLNK,  "$(S1){$(D1)-$(SD8)}Val:Ai-SP")
+}
+
+record(ao,     "$(S1){$(D1)-$(SD8)}Val:Ai-SP") {
+  field(DESC,  "Ibeam Scaling Factor:")
+  field(PREC,  "3")
+  field(DRVH,  "1")
+  field(FLNK,  "$(S1){$(D1)-$(SD8)}Val:EP1-Calc")
+  info(autosaveFields_pass1, "VAL")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD8)}Val:EP1-Calc") {
+  field(DESC,  "EP1 Calc:")
+  field(CALC,  "FLOOR(C*A/B+0.5)")
+  field(INPA,  "$(S1){$(D1)-$(SD8)}Val:Ai-SP")
+  field(INPB,  "$(S1){$(D1)-$(SD8)}Val:C1-SP")
+  field(INPC,  "$(S1){$(D1)-$(SD8)}Val:C2-SP")
+  field(OUT,   "$(S1){$(D1)-$(SD8)}Val:EP1-SP PP")
+}
+
+record(longout,"$(S1){$(D1)-$(SD8)}Val:EP1-SP") {
+  field(DTYP,  "asynInt32")
+  field(OUT,   "@asyn($(PORT),0)EQ_EP1_SP")
+# field(FLNK,  "$(S1){$(D1)-$(SD8)}Lim:EHi-SP")
+  field(FLNK,  "$(S1){$(D1)-$(SD8)}Lim:EHi-Calc")
+}
+
+#====================================================================================================
+#----------------------------------------------------------------------------------------------------
+#
+# July 11, 2017, B. Holub: E Loss/turn should come
+# from SR-RF{CALC}E:Loss/2
+#
+record(calcout, "$(S1){$(D1)-$(SD8)}Lim:EHi-Calc") {
+  field(SCAN,   "1 second")
+  field(CALC,   "(A>B)?A/2:B")
+  field(INPA,   "SR-RF{CALC}E:Loss CPP")
+  field(INPB,   "$(S1){$(D1)-$(SD8)}Lim:ELo-SP")
+  field(OUT,    "$(S1){$(D1)-$(SD8)}Lim:EHi-SP PP")
+}
+
+record(ao,     "$(S1){$(D1)-$(SD8)}Lim:EHi-SP") {
+  field(DESC,  "Vacc High Term:")
+#
+# July 11, 2017, B. Holub: E Loss/turn should come
+# from SR-RF{CALC}E:Loss/2
+#
+  field(PREC,  "1")
+  field(EGU,   "kV")
+  field(DRVL,  "1")
+  field(FLNK,  "$(S1){$(D1)-$(SD8)}Val:EP2-Calc")
+  info(autosaveFields_pass1, "VAL")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD8)}Val:EP2-Calc") {
+  field(DESC,  "EP2 Calc:")
+# field(CALC,  "FLOOR((A/B)*(C/D)*E+0.5)")
+# May 30, 2017, B. Holub: New formula
+  field(CALC,  "FLOOR((A/D)*E+0.5)")
+  field(INPA,  "$(S1){$(D1)-$(SD8)}Lim:EHi-SP")
+  field(INPB,  "512")
+  field(INPC,  "1000")
+  field(INPD,  "1024")
+  field(INPE,  "$(S1){$(D1)-$(SD8)}Val:C3-SP")
+  field(OUT,   "$(S1){$(D1)-$(SD8)}Val:EP2-SP PP")
+}
+
+record(longout,"$(S1){$(D1)-$(SD8)}Val:EP2-SP") {
+  field(DTYP,  "asynInt32")
+  field(OUT,   "@asyn($(PORT),0)EQ_EP2_SP")
+  field(FLNK,  "$(S1){$(D1)-$(SD8)}Lim:ELo-SP")
+}
+
+
+#====================================================================================================
+#----------------------------------------------------------------------------------------------------
+
+record(ao,     "$(S1){$(D1)-$(SD8)}Lim:ELo-SP") {
+  field(DESC,  "Vacc Low Term:")
+  field(PREC,  "1")
+  field(EGU,   "kV")
+  field(DRVL,  "1")
+  field(FLNK,  "$(S1){$(D1)-$(SD8)}Val:EP3-Calc")
+  info(autosaveFields_pass1, "VAL")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD8)}Val:EP3-Calc") {
+  field(DESC,  "EP3 Calc:")
+# field(CALC,  "FLOOR((A/B)*(C/D)*E+0.5)")
+# May 30, 2017, B. Holub: New formula
+  field(CALC,  "FLOOR((A/D)*E+0.5)")
+  field(INPA,  "$(S1){$(D1)-$(SD8)}Lim:ELo-SP")
+  field(INPB,  "512")
+  field(INPC,  "1000")
+  field(INPD,  "1024")
+  field(INPE,  "$(S1){$(D1)-$(SD8)}Val:C3-SP")
+  field(OUT,   "$(S1){$(D1)-$(SD8)}Val:EP3-SP PP")
+}
+
+record(longout,"$(S1){$(D1)-$(SD8)}Val:EP3-SP") {
+  field(DTYP,  "asynInt32")
+  field(OUT,   "@asyn($(PORT),0)EQ_EP3_SP")
+  field(FLNK,  "$(S1){$(D1)-$(SD8)}Val:Ac-SP")
+}
+
+#====================================================================================================
+#----------------------------------------------------------------------------------------------------
+
+record(ao,     "$(S1){$(D1)-$(SD8)}Val:Ac-SP") {
+  field(DESC,  "Vcav Scaling Factor:")
+  field(PREC,  "1")
+  field(DRVH,  "512")
+  field(DRVL,  "0")
+  field(FLNK,  "$(S1){$(D1)-$(SD8)}Val:EP4-Calc")
+  info(autosaveFields_pass1, "VAL")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD8)}Val:EP4-Calc") {
+  field(DESC,  "EP4 Calc:")
+  field(CALC,  "FLOOR(C*D*A/B+0.5)")
+  field(INPA,  "$(S1){$(D1)-$(SD8)}Val:Ac-SP")
+  field(INPB,  "512")
+  field(INPC,  "$(S1){$(D1)-$(SD8)}Val:C2-SP")
+  field(INPD,  "$(S1){$(D1)-$(SD8)}Val:C3-SP")
+  field(OUT,   "$(S1){$(D1)-$(SD8)}Val:EP4-SP PP")
+}
+
+record(longout,"$(S1){$(D1)-$(SD8)}Val:EP4-SP") {
+  field(DTYP,  "asynInt32")
+  field(OUT,   "@asyn($(PORT),0)EQ_EP4_SP")
+  field(FLNK,  "$(S1){$(D1)-$(SD8)}Val:Af-SP")
+}
+
+#====================================================================================================
+#----------------------------------------------------------------------------------------------------
+
+record(ao,     "$(S1){$(D1)-$(SD8)}Val:Af-SP") {
+  field(DESC,  "Pfwd Scaling Factor:")
+  field(PREC,  "3")
+  field(DRVH,  "1")
+  field(FLNK,  "$(S1){$(D1)-$(SD8)}Val:EP5-Calc")
+  info(autosaveFields_pass1, "VAL")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD8)}Val:EP5-Calc") {
+  field(DESC,  "EP5 Calc:")
+  field(CALC,  "FLOOR(A/B+0.5)")
+  field(INPA,  "$(S1){$(D1)-$(SD8)}Val:Af-SP")
+  field(INPB,  "$(S1){$(D1)-$(SD8)}Val:C1-SP")
+  field(OUT,   "$(S1){$(D1)-$(SD8)}Val:EP5-SP PP")
+}
+
+record(longout,"$(S1){$(D1)-$(SD8)}Val:EP5-SP") {
+  field(DTYP,  "asynInt32")
+  field(OUT,   "@asyn($(PORT),0)EQ_EP5_SP")
+  field(FLNK,  "$(S1){$(D1)-$(SD8)}Val:Ar-SP")
+}
+
+#====================================================================================================
+#----------------------------------------------------------------------------------------------------
+
+record(ao,     "$(S1){$(D1)-$(SD8)}Val:Ar-SP") {
+  field(DESC,  "Prev Scaling Factor:")
+  field(PREC,  "3")
+  field(DRVH,  "1")
+  field(FLNK,  "$(S1){$(D1)-$(SD8)}Val:EP6-Calc")
+  info(autosaveFields_pass1, "VAL")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD8)}Val:EP6-Calc") {
+  field(DESC,  "EP6 Calc:")
+  field(CALC,  "FLOOR(A/B+0.5)")
+  field(INPA,  "$(S1){$(D1)-$(SD8)}Val:Ar-SP")
+  field(INPB,  "$(S1){$(D1)-$(SD8)}Val:C1-SP")
+  field(OUT,   "$(S1){$(D1)-$(SD8)}Val:EP6-SP PP")
+}
+
+record(longout,"$(S1){$(D1)-$(SD8)}Val:EP6-SP") {
+  field(DTYP,  "asynInt32")
+  field(OUT,   "@asyn($(PORT),0)EQ_EP6_SP")
+  field(FLNK,  "$(S1){$(D1)-$(SD8)}Lim:PrcLo-SP")
+}
+
+#====================================================================================================
+#----------------------------------------------------------------------------------------------------
+
+record(ao,     "$(S1){$(D1)-$(SD8)}Lim:PrcLo-SP") {
+  field(DESC,  "Left Side %:")
+  field(PREC,  "1")
+  field(EGU,   "%")
+  field(DRVH,  "100")
+  field(DRVL,  "0")
+  field(FLNK,  "$(S1){$(D1)-$(SD8)}Val:EP7-Calc")
+  info(autosaveFields_pass1, "VAL")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD8)}Val:EP7-Calc") {
+  field(DESC,  "EP7 Calc:")
+  field(CALC,  "FLOOR(A*B/C+0.5)")
+  field(INPA,  "$(S1){$(D1)-$(SD8)}Lim:PrcLo-SP")
+  field(INPB,  "$(S1){$(D1)-$(SD8)}Val:C3-SP")
+  field(INPC,  "100")
+  field(OUT,   "$(S1){$(D1)-$(SD8)}Val:EP7-SP PP")
+}
+
+record(longout,"$(S1){$(D1)-$(SD8)}Val:EP7-SP") {
+  field(DTYP,  "asynInt32")
+  field(OUT,   "@asyn($(PORT),0)EQ_EP7_SP")
+  field(FLNK,  "$(S1){$(D1)-$(SD8)}Lim:PrcHi-SP")
+}
+
+#====================================================================================================
+#----------------------------------------------------------------------------------------------------
+
+record(ao,     "$(S1){$(D1)-$(SD8)}Lim:PrcHi-SP") {
+  field(DESC,  "Right Side %:")
+  field(PREC,  "1")
+  field(EGU,   "%")
+  field(DRVH,  "200")
+  field(DRVL,  "100")
+  field(FLNK,  "$(S1){$(D1)-$(SD8)}Val:EP8-Calc")
+  info(autosaveFields_pass1, "VAL")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD8)}Val:EP8-Calc") {
+  field(DESC,  "EP8 Calc:")
+  field(CALC,  "FLOOR(B*A/C+0.5)")
+  field(INPA,  "$(S1){$(D1)-$(SD8)}Lim:PrcHi-SP")
+  field(INPB,  "$(S1){$(D1)-$(SD8)}Val:C3-SP")
+  field(INPC,  "200")
+  field(OUT,   "$(S1){$(D1)-$(SD8)}Val:EP8-SP PP")
+}
+
+record(longout,"$(S1){$(D1)-$(SD8)}Val:EP8-SP") {
+  field(DTYP,  "asynInt32")
+  field(OUT,   "@asyn($(PORT),0)EQ_EP8_SP")
+}
+
+record(calcout, "$(S1){$(D1)-$(SD8)}Cmd:Wr-Calc") {
+  field(SCAN,   "2 second")
+  field(CALC,   "1")
+  field(OUT,    "$(S1){$(D1)-$(SD8)}Cmd:Wr-SP PP")
+}
+
+record(bo,     "$(S1){$(D1)-$(SD8)}Cmd:Wr-SP") {
+  field(DTYP,  "asynInt32")
+  field(OUT,   "@asyn($(PORT),0)EQ_Wr")
+  field(ZNAM,  "Idle")
+  field(ONAM,  "Write")
+  field(HIGH,  "0.3")
+}
+
+record(bo,     "$(S1){$(D1)-$(SD8)}Cmd:Rd-RB") {
+  field(DTYP,  "asynInt32")
+  field(OUT,   "@asyn($(PORT),0)EQ_Rd")
+  field(ZNAM,  "Idle")
+  field(ONAM,  "Read")
+  field(HIGH,  "5.0")
+  field(FLNK,  "$(S1){$(D1)-$(SD8)}Val:Rd-Calc")
+}
+
+record(calcout,"$(S1){$(D1)-$(SD8)}Val:Rd-Calc") {
+  field(DESC,  "Read at transition to zero")
+  field(CALC,  "A?0:1")
+  field(INPA,  "$(S1){$(D1)-$(SD8)}Cmd:Rd-RB")
+  field(OOPT,  "When Non-zero")
+  field(OUT,   "$(S1){$(D1)-$(SD8)}Val:EP1-RB.PROC")
+}
+
+record(longin,  "$(S1){$(D1)-$(SD8)}Val:EP1-RB") {
+  field(DTYP,   "asynInt32")
+  field(DESC,   "Ibeam Scaling Factor:")
+  field(INP ,   "@asyn($(PORT),0)EQ_EP1_RB")
+  field(SCAN,   "I/O Intr")
+  field(FLNK,   "$(S1){$(D1)-$(SD8)}Val:EP2-RB")
+}
+
+record(longin,  "$(S1){$(D1)-$(SD8)}Val:EP2-RB") {
+  field(DTYP,   "asynInt32")
+  field(DESC,   "Vacc Lim. Hi:")
+  field(INP ,   "@asyn($(PORT),0)EQ_EP2_RB")
+  field(SCAN,   "I/O Intr")
+  field(FLNK,   "$(S1){$(D1)-$(SD8)}Val:EP3-RB")
+}
+
+record(longin,  "$(S1){$(D1)-$(SD8)}Val:EP3-RB") {
+  field(DTYP,   "asynInt32")
+  field(DESC,   "Vacc Lim. Lo:")
+  field(INP ,   "@asyn($(PORT),0)EQ_EP3_RB")
+  field(SCAN,   "I/O Intr")
+  field(FLNK,   "$(S1){$(D1)-$(SD8)}Val:EP4-RB")
+}
+
+record(longin,  "$(S1){$(D1)-$(SD8)}Val:EP4-RB") {
+  field(DTYP,   "asynInt32")
+  field(DESC,   "Vcav Scaling Factor:")
+  field(INP ,   "@asyn($(PORT),0)EQ_EP4_RB")
+# field(SCAN,   "I/O Intr")
+  field(FLNK,   "$(S1){$(D1)-$(SD8)}Val:EP5-RB")
+}
+
+record(longin,  "$(S1){$(D1)-$(SD8)}Val:EP5-RB") {
+  field(DTYP,   "asynInt32")
+  field(DESC,   "Pfwd Scaling Factor:")
+  field(INP ,   "@asyn($(PORT),0)EQ_EP5_RB")
+# field(SCAN,   "I/O Intr")
+  field(FLNK,   "$(S1){$(D1)-$(SD8)}Val:EP6-RB")
+}
+
+record(longin,  "$(S1){$(D1)-$(SD8)}Val:EP6-RB") {
+  field(DTYP,   "asynInt32")
+  field(DESC,   "Prev Scaling Factor:")
+  field(INP ,   "@asyn($(PORT),0)EQ_EP6_RB")
+# field(SCAN,   "I/O Intr")
+  field(FLNK,   "$(S1){$(D1)-$(SD8)}Val:EP7-RB_")
+}
+
+record(longin,  "$(S1){$(D1)-$(SD8)}Val:EP7-RB_") {
+  field(DTYP,   "asynInt32")
+  field(DESC,   "Lim. Low [%]:")
+  field(INP ,   "@asyn($(PORT),0)EQ_EP7_RB")
+# field(SCAN,   "I/O Intr")
+  field(FLNK,   "$(S1){$(D1)-$(SD8)}Val:EP7-Calc_")
+}
+
+record(calcout, "$(S1){$(D1)-$(SD8)}Val:EP7-Calc_") {
+  field(DESC,   "Make sign")
+  field(CALC,   "A<B?A:-(B-A)")
+  field(INPA,   "$(S1){$(D1)-$(SD8)}Val:EP7-RB_")
+  field(INPB,   "1073741824")
+  field(FLNK,   "$(S1){$(D1)-$(SD8)}Val:EP7-RB")
+}
+
+record(longin,  "$(S1){$(D1)-$(SD8)}Val:EP7-RB") {
+  field(DESC,   "Lim. Low [%]:")
+  field(INP ,   "$(S1){$(D1)-$(SD8)}Val:EP7-Calc_")
+  field(FLNK,   "$(S1){$(D1)-$(SD8)}Val:EP8-RB_")
+}
+
+record(longin,  "$(S1){$(D1)-$(SD8)}Val:EP8-RB_") {
+  field(DTYP,   "asynInt32")
+  field(DESC,   "Lim. High [%]:")
+  field(INP ,   "@asyn($(PORT),0)EQ_EP8_RB")
+# field(SCAN,   "I/O Intr")
+  field(FLNK,   "$(S1){$(D1)-$(SD8)}Val:EP8-Calc_")
+}
+
+record(calcout, "$(S1){$(D1)-$(SD8)}Val:EP8-Calc_") {
+  field(DESC,   "Make sign")
+  field(CALC,   "A<B?A:-(B-A)")
+  field(INPA,   "$(S1){$(D1)-$(SD8)}Val:EP8-RB_")
+  field(INPB,   "2147483648")
+  field(FLNK,   "$(S1){$(D1)-$(SD8)}Val:EP8-RB")
+}
+
+record(longin,  "$(S1){$(D1)-$(SD8)}Val:EP8-RB") {
+  field(DESC,   "Lim. High [%]:")
+  field(INP ,   "$(S1){$(D1)-$(SD8)}Val:EP8-Calc_")
+  field(FLNK,   "$(S1){$(D1)-$(SD8)}Val:EP9-RB")
+}
+
+record(longin,  "$(S1){$(D1)-$(SD8)}Val:EP9-RB") {
+  field(DTYP,   "asynInt32")
+  field(DESC,   "Left Err. Cnt:")
+  field(INP ,   "@asyn($(PORT),0)EQ_EP9_RB")
+# field(SCAN,   "I/O Intr")
+  field(FLNK,   "$(S1){$(D1)-$(SD8)}Val:EPA-RB")
+}
+
+record(longin,  "$(S1){$(D1)-$(SD8)}Val:EPA-RB") {
+  field(DTYP,   "asynInt32")
+  field(DESC,   "Right Err. Cnt:")
+  field(INP ,   "@asyn($(PORT),0)EQ_EPA_RB")
+# field(SCAN,   "I/O Intr")
+}
+
+record(bo,      "$(S1){$(D1)-$(SD8)}Enbl:SP") {
+  field(DTYP,   "asynInt32")
+  field(DESC,   "eQuench Enable")
+  field(OUT ,   "@asyn($(PORT),0)EQ_Enbl")
+  field(ONAM,   "Enable")
+  field(ZNAM,   "Disable")
+}
+
+record(calcout, "$(S1){$(D1)-$(SD8)}Lim:PwrLo-Calc") {
+  field(DESC,   "Prev Low Lim:")
+  field(SCAN,   "1 second")
+  field(CALC,   "(A-B*C/F)*D/E")
+  field(INPA,   "SR-RF{Xmtr:C-Kly}Pwr:Fwd-I CA")
+  field(INPB,   "$(S1){$(D1)-$(SD8)}Lim:EHi-SP")
+  field(INPC,   "SR:C03-BI{DCCT:1}I:Real-I CA")
+  field(INPD,   "$(S1){$(D1)-$(SD8)}Lim:PrcLo-SP")
+  field(INPE,   "100")
+  field(INPF,   "1000")
+  field(OUT,    "$(S1){$(D1)-$(SD8)}Lim:PwrLo PP")
+}
+
+record(ai,      "$(S1){$(D1)-$(SD8)}Lim:PwrLo") {
+  field(DESC,   "Prev Low Lim:")
+  field(EGU,    "kW")
+  field(PREC,   "1")
+  field(FLNK,   "$(S1){$(D1)-$(SD8)}Lim:PwrHi-Calc")
+}
+
+record(calcout, "$(S1){$(D1)-$(SD8)}Lim:PwrHi-Calc") {
+  field(DESC,   "Prev High Lim:")
+  field(CALC,   "(A-B*C/F)*D/E")
+  field(INPA,   "SR-RF{Xmtr:C-Kly}Pwr:Fwd-I CA")
+  field(INPB,   "$(S1){$(D1)-$(SD8)}Lim:ELo-SP")
+  field(INPC,   "SR:C03-BI{DCCT:1}I:Real-I CA")
+  field(INPD,   "$(S1){$(D1)-$(SD8)}Lim:PrcHi-SP")
+  field(INPE,   "100")
+  field(INPF,   "1000")
+  field(OUT,    "$(S1){$(D1)-$(SD8)}Lim:PwrHi PP")
+}
+
+record(ai,      "$(S1){$(D1)-$(SD8)}Lim:PwrHi") {
+  field(DESC,   "Prev Low Lim:")
+  field(EGU,    "kW")
+  field(PREC,   "1")
+}
+
+
+
+

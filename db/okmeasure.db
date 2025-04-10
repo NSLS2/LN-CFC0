@@ -1,0 +1,149 @@
+#
+# Measurements and calculations
+#
+# P - Record name prefix
+#
+# External Records
+# Inputs:
+#  $(S1){$(D1)}T:DAC-I - from okllrf.db
+#
+# Forwards:
+#  $(S1){$(D1)}Update:Done2-FO_ - triggers $(S1){$(D1)}Meas:Update-FO_
+#
+# Outputs:
+#  $(S1){$(D1)}Window:Start-SP - monitored from okadc.db
+#  $(S1){$(D1)}Window:Width-SP - monitored from okadc.db
+
+record(fanout,  "$(S1){$(D1)}Cmd:UpdMeas-FOut") {
+  field(LNK1,   "$(S1){$(D1)}AmpCheck-Calc_")
+  field(LNK2,   "$(S1){$(D1)}Phs:AutoSet-I")
+}
+
+record(ao,      "$(S1){$(D1)}Time:Wnd0-SP") {
+  field(DESC,   "Start of measurement window")
+  field(EGU ,   "ms")
+  field(PINI,   "YES")
+  field(FLNK,   "$(S1){$(D1)}Time:Wnd0-Calc")
+  info(autosaveFields_pass0, "VAL")
+}
+
+record(calcout, "$(S1){$(D1)}Time:Wnd0-Calc") {
+  field(CALC,   "A*B")
+  field(INPA,   "$(S1){$(D1)}Time:Wnd0-SP")
+  field(INPB,   "1.0E+03")
+  field(OUT,    "$(S1){$(D1)}Time:WndStart PP")
+}
+
+record(ao,      "$(S1){$(D1)}Time:WndStart") {
+  field(DESC,   "Start of measurement window")
+  field(EGU ,   "us")
+}
+
+record(ao,      "$(S1){$(D1)}Time:WndW-SP") {
+  field(DESC,   "Width of measurement window")
+  field(EGU ,   "ms")
+  field(PINI,   "YES")
+  field(FLNK,   "$(S1){$(D1)}Time:WndW-Calc")
+  info(autosaveFields_pass0, "VAL")
+}
+
+record(calcout, "$(S1){$(D1)}Time:WndW-Calc") {
+  field(CALC,   "A*B")
+  field(INPA,   "$(S1){$(D1)}Time:WndW-SP")
+  field(INPB,   "1.0E+03")
+  field(OUT,    "$(S1){$(D1)}Time:WndWidth PP")
+}
+
+record(ao,      "$(S1){$(D1)}Time:WndWidth") {
+  field(DESC,   "Width of measurement window")
+  field(EGU ,   "us")
+}
+
+record(calcout, "$(S1){$(D1)}AmpCheck-Calc_") {
+  field(CALC, "A>C&&B>D")
+  field(INPA, "$(S1){$(D1)}E:$(TBL1)-I MSS")
+  field(INPB, "$(S1){$(D1)-$(SD2)}E:N-I MSS")
+  field(INPC, "0.002")
+  field(INPD, "0.002")
+  field(HIGH, "1")
+  field(LOW , "0")
+  field(LSV , "INVALID")
+  field(OUT , "$(S1){$(D1)}E:Limit-I PP MSS")
+}
+
+record(bo,      "$(S1){$(D1)}E:Limit-I") {
+  field(ZNAM,   "Amplitude too low")
+  field(ONAM,   "Permit")
+}
+
+record(calcout, "$(S1){$(D1)}Phs:AutoSet-I") {
+  field(CALC,   "E:=A; E>F?(E-G):(E<-F?(E+G):E)")
+  field(INPA,   "$(S1){$(D1)}Phs:Rot2-Calc MSS")
+  field(INPB,   "$(S1){$(D1)-Fwd}Phs:Mean-I MSS")
+  field(INPC,   "$(S1){$(D1)-$(TBL2)}Enbl:Cmd MSS")
+  field(INPD,   "90")
+  field(INPE,   "")
+  field(INPF,   "180")
+  field(INPG,   "360")
+  field(EGU ,   "deg")
+  field(PREC,   "1")
+}
+
+#record(calcout, "$(S1){$(D1)}Phs:AutoSet-I") {
+#  field(CALC, "E:=D-A+B; E>F?(E-G):(E<-F?(E+G):E)")
+#  field(INPA, "$(S1){$(D1)}Field:PhaMean-I MSS")
+#  field(INPB, "$(S1){$(D1)}PFwd:PhaMean-I MSS")
+#  field(INPC, "$(S1){$(D1)-$(TBL2)}Enbl:Cmd MSS")
+#  field(INPD, "90")
+#  field(INPE, "")
+#  field(INPF, "180")
+#  field(INPG, "360")
+#  field(EGU , "deg")
+#  field(PREC, "2")
+#}
+
+record(bo, "$(S1){$(D1)}AutoPhase-Cmd") {
+  field(DESC, "Auto set loop phase")
+  field(ZNAM, "Auto Loop")
+  field(ONAM, "Auto Loop")
+  field(FLNK, "$(S1){$(D1)}AutoPhase-Seq_")
+}
+
+record(seq, "$(S1){$(D1)}AutoPhase-Seq_") {
+  field(SDIS, "$(S1){$(D1)}E:Limit-I MSS")
+  field(DISV, "0")
+  field(DOL1, "$(S1){$(D1)}Phs:AutoSet-I MSS")
+  field(LNK1, "$(S1){$(D1)}Phs:Loop-SP PP MSS")
+}
+
+record(bo, "$(S1){$(D1)}AutoSP-Cmd") {
+  field(DESC, "Auto set SP")
+  field(ZNAM, "Auto SP")
+  field(ONAM, "Auto SP")
+  field(FLNK, "$(S1){$(D1)}AutoSP-Seq_")
+}
+
+#----------------------------------------------------------------
+# SEP. 11, 2017: In order to allow Autoset (in manual mode!)
+# OROC fields must be 0. okCloseLoop is expected to do it
+# anyway + restore the OROC values
+#
+record(seq,    "$(S1){$(D1)}AutoSP-Seq_") {
+  field(DO1,   "0")
+  field(LNK1,  "$(S1){$(D1)}E:SP.OROC PP")
+  field(DO2,   "0")
+  field(LNK2,  "$(S1){$(D1)}E:Fb-SP.OROC PP")
+  field(DO3,   "0")
+  field(LNK3,  "$(S1){$(D1)}Phs:Fb-SP.OROC PP")
+  field(DOL4,  "$(S1){$(D1)-$(SD2)}E:N-I MSS")
+  field(LNK4,  "$(S1){$(D1)}E:Fb-SP PP MSS")
+#  FEB. 17, 2015: Change the default phase setpoint to Phs:N1Avg-I
+#  field(DOL2,  "$(S1){$(D1)-$(SD2)}Phs:I MSS")
+#  SEP. 11, 2017: The FB phase setpoint should be set equal to cavity
+#  phase at this point:
+  field(DOL5,  "$(S1){$(D1)-$(SD2)}Phs:N1Avg-I")
+  field(LNK5,  "$(S1){$(D1)}Phs:Fb-SP PP")
+}
+
+
+

@@ -1,0 +1,187 @@
+record(mbbo,    "$(S1){$(D1)}Sw:Chan4-SP") {
+  field(ZRVL,   "0")
+  field(ZRST,   "fb_in (cavity)")
+  field(ONVL,   "1")
+  field(ONST,   "fb setpoint (ramp table)")
+  field(TWVL,   "2")
+  field(TWST,   "e2")
+  field(THVL,   "3")
+  field(THST,   "e4")
+  field(FRVL,   "4")
+  field(FRST,   "Ch 1:")
+  field(FVVL,   "5")
+  field(FVST,   "fdbk_err_sat")
+  field(SXVL,   "6")
+  field(SXST,   "dout40 (FF setpoint)")
+  field(SVVL,   "7")
+  field(SVST,   "din1_2")
+  field(OUT,    "$(S1){$(D1)}Cnt:Chan4-SP PP")
+  info(autosaveFields_pass1, "VAL")
+}
+
+record(longout, "$(S1){$(D1)}Cnt:Chan4-SP") {
+  field(DESC,   "ScopeCh4: ")
+  field(DTYP,   "asynInt32")
+  field(VAL,    "2")
+  field(OUT ,   "@asyn($(PORT),0)WireInADCMUX")
+}
+
+record(longout, "$(S1){$(D1)}Enbl:RefPr") {
+  field(DESC,   "RefPr enable: ")
+  field(DTYP,   "asynInt32")
+  field(VAL,    "0")
+  field(PINI,   "YES")
+  field(OUT ,   "@asyn($(PORT),0)RefPr Ena")
+}
+
+record(longout, "$(S1){$(D1)}Cnt:Zoom") {
+  field(DESC,   "Zoom selector: ")
+  field(DTYP,   "asynInt32")
+  field(HOPR,   "19")
+  field(LOPR,   "0")
+  field(OUT ,   "@asyn($(PORT),0)ZoomSelector")
+  info(autosaveFields_pass1, "VAL")
+}
+
+record(longout, "$(S1){$(D1)}Cnt:$(TBL2)RampInterval") {
+  field(DESC,   "FB ramp interval: ")
+  field(DTYP,   "asynInt32")
+  field(VAL,    "50")
+  field(OUT ,   "@asyn($(PORT),0)Rampinterval")
+  info(autosaveFields_pass1, "VAL")
+}
+############################################################
+#
+# SEP.28, 2020: C. Marques: Added na registers:
+#
+record(longout, "$(S1){$(D1)-$(D9)}Freq:SP") {
+  field(DESC,   "naFreq:")
+  field(DTYP,   "asynInt32")
+  field(OUT ,   "@asyn($(PORT),0)naFreq")
+  info(autosaveFields_pass1, "VAL")
+}
+
+record(longout, "$(S1){$(D1)-$(D9)}Phs:II-SP") {
+  field(DESC,   "naPII:")
+  field(DTYP,   "asynInt32")
+  field(OUT ,   "@asyn($(PORT),0)naPII")
+  info(autosaveFields_pass1, "VAL")
+}
+
+record(longout, "$(S1){$(D1)-$(D9)}Cnt:Phs0-SP") {
+  field(DESC,   "naPIC0:")
+  field(DTYP,   "asynInt32")
+  field(OUT ,   "@asyn($(PORT),0)naPIC0")
+  info(autosaveFields_pass1, "VAL")
+}
+
+record(longout, "$(S1){$(D1)-$(D9)}Cnt:Phs1-SP") {
+  field(DESC,   "naPIC1:")
+  field(DTYP,   "asynInt32")
+  field(OUT ,   "@asyn($(PORT),0)naPIC1")
+  info(autosaveFields_pass1, "VAL")
+}
+
+record(longout, "$(S1){$(D1)-$(D9)}Val:Intens-SP") {
+  field(DESC,   "naIntensity:")
+  field(DTYP,   "asynInt32")
+  field(OUT ,   "@asyn($(PORT),0)naInts")
+  info(autosaveFields_pass1, "VAL")
+}
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+############################################################
+#
+# OCT. 14, 2020: C. Marques: Added Pulsed Gain registers:
+#
+record(bo,      "$(S1){$(D1)-$(DA)}Enbl:Circ-SP") {
+  field(DESC,   "Circuit Enable:")
+  field(ZNAM,   "Off")
+  field(ONAM,   "On")
+  field(FLNK,   "$(S1){$(D1)-$(DA)}Enbl:Calc")
+  info(autosaveFields_pass1, "VAL")
+}
+
+record(bo,      "$(S1){$(D1)-$(DA)}Enbl:Rept-SP") {
+  field(DESC,   "Repeat Enable:")
+  field(ZNAM,   "Off")
+  field(ONAM,   "On")
+  field(FLNK,   "$(S1){$(D1)-$(DA)}Enbl:Calc")
+  info(autosaveFields_pass1, "VAL")
+}
+
+record(calcout, "$(S1){$(D1)-$(DA)}Enbl:Calc") {
+  field(CALC,   "A+(B<<1)")
+  field(INPA,   "$(S1){$(D1)-$(DA)}Enbl:Circ-SP")
+  field(INPB,   "$(S1){$(D1)-$(DA)}Enbl:Rept-SP")
+  field(OUT,    "$(S1){$(D1)-$(DA)}Enbl:SP PP")
+}
+
+record(longout, "$(S1){$(D1)-$(DA)}Enbl:SP") {
+  field(DESC,   "pgEnable:")
+  field(DTYP,   "asynInt32")
+  field(OUT ,   "@asyn($(PORT),0)pgEnbl")
+}
+
+record(ao,      "$(S1){$(D1)-$(DA)}Val:Kp-SP") {
+  field(DESC,   "alt Kp:")
+  field(DTYP,   "asynFloat64")
+  field(OUT ,   "@asyn($(PORT),0)pgKp")
+  field(VAL ,   "0")
+  field(PREC,   "4")
+  field(DRVH,   "1")
+  field(DRVL,   "0")
+  field(HOPR,   "1")
+  field(LOPR,   "0")
+  field(IVOA,   "Don't drive outputs")
+  info(autosaveFields, "VAL")
+}
+
+record(ao,      "$(S1){$(D1)-$(DA)}Val:Ki-SP") {
+  field(DESC,   "alt Ki")
+  field(DTYP,   "asynFloat64")
+  field(OUT ,   "@asyn($(PORT),0)pgKi")
+  field(VAL ,   "0")
+  field(PREC,   "4")
+  field(DRVH,   "1")
+  field(DRVL,   "0")
+  field(HOPR,   "1")
+  field(LOPR,   "0")
+  field(IVOA,   "Don't drive outputs")
+  info(autosaveFields, "VAL")
+}
+
+record(longout, "$(S1){$(D1)-$(DA)}Time:SP") {
+  field(DESC,   "Switch Time:")
+  field(DTYP,   "asynInt32")
+  field(OUT ,   "@asyn($(PORT),0)pgTime")
+  info(autosaveFields_pass1, "VAL")
+}
+
+############################################################
+############################################################
+# AUG 14 2015 Ruslan: Use MSB of Ep60 as an indicator that
+# connection has been established with FPGA,
+# and all PVs that were
+# auto-restored should be re-processed to
+# update values in FPGA
+############################################################
+
+record(bi, "$(S1){$(D1)}Ini:Con-Sts") {
+# Initialized to 1 by connect
+        field(DESC, "Connection init stat:")
+        field(VAL,  "0")
+        field(PINI, "YES")
+#       field(INP,  "$(S1){$(D1)}DI:Ep60-I.BF")
+        field(INP,  "$(S1){$(D1)}DI:Ep60-I")
+        field(ZNAM, "Idle")
+        field(ONAM, "ConnectionInit")
+        field(FLNK, "$(S1){$(D1)}Con-Fo")
+}
+
+record(fanout,  "$(S1){$(D1)}Con-Fo") {
+        field(LNK1, "$(S1){$(D1)}Con:Tuner-Fo")
+        field(LNK2, "$(S1){$(D1)}Con:llrf-Fo")
+        field(LNK3, "$(S1){$(D1)}DI:Ep20-I")
+}
+
+

@@ -1,0 +1,508 @@
+record(longin, "$(S1){$(D1)}DI:Ep00-RB") {
+  field(DTYP,  "asynInt32")
+  field(DESC,  "WireIn Ep 00 RB:")
+  field(INP ,  "@asyn($(PORT),0)WinRB EP00")
+  field(SCAN,  "I/O Intr")
+  field(FLNK,  "$(S1){$(D1)}DI:B00Ep00-RB")
+}
+
+record(calcout, "$(S1){$(D1)}DI:B00Ep00-RB") {
+  field(DESC,   "SDRAM Read Enable:")
+  field(CALC,   "(A & B)?1:0")
+  field(INPA,   "$(S1){$(D1)}DI:Ep00-RB")
+  field(INPB,   "1")
+  field(FLNK,   "$(S1){$(D1)}DI:B01Ep00-RB")
+}
+
+record(calcout, "$(S1){$(D1)}DI:B01Ep00-RB") {
+  field(DESC,   "SDRAM Write Enable:")
+  field(CALC,   "(A & B)?1:0")
+  field(INPA,   "$(S1){$(D1)}DI:Ep00-RB")
+  field(INPB,   "2")
+  field(FLNK,   "$(S1){$(D1)}DI:B02Ep00-RB")
+}
+
+record(calcout, "$(S1){$(D1)}DI:B02Ep00-RB") {
+  field(DESC,   "Reset:")
+  field(CALC,   "(A & B)?1:0")
+  field(INPA,   "$(S1){$(D1)}DI:Ep00-RB")
+  field(INPB,   "4")
+  field(FLNK,   "$(S1){$(D1)}DI:Ep01-RB")
+}
+
+record(longin,  "$(S1){$(D1)}DI:Ep01-RB") {
+  field(DTYP,   "asynInt32")
+  field(DESC,   "WireIn Ep 01 RB:")
+  field(INP ,   "@asyn($(PORT),0)WinRB EP01")
+  field(SCAN,   "I/O Intr")
+  field(FLNK,   "$(S1){$(D1)}DI:Ep02-RB")
+}
+
+record(longin,  "$(S1){$(D1)}DI:Ep02-RB") {
+  field(DTYP,   "asynInt32")
+  field(DESC,   "WireIn Ep 02 RB:")
+  field(INP ,   "@asyn($(PORT),0)WinRB EP02")
+  field(SCAN,   "I/O Intr")
+  field(FLNK,   "$(S1){$(D1)}Cnt:Zoom-RB")
+}
+
+record(calcout, "$(S1){$(D1)}Cnt:Zoom-RB") {
+  field(DESC,   "Zoom selector:")
+  field(CALC,   "(A & B)")
+  field(INPA,   "$(S1){$(D1)}DI:Ep02-RB")
+# field(INPB,   "0x0000001f")
+  field(INPB,   "31")
+  field(FLNK,   "$(S1){$(D1)}Time:ScopeRange")
+}
+
+record(calc,   "$(S1){$(D1)}Time:Clk") {
+# Valid at sample frequency 40 MHz
+# 12.5 / 499.68 [Mhz] = 0.025016 us
+  field(CALC,  "12.5/A")
+  field(INPA,  "$(S1){$(D1)}Freq:I")
+  field(EGU,   "us")
+  field(FLNK,  "$(S1){$(D1)}Time:Sample")
+}
+
+record(calc,   "$(S1){$(D1)}Time:Sample") {
+# This is one full scope span at zoom = 0
+# 25.6 us
+  field(CALC,  "1000.0*(50.0/A)*(512.0/2.0)")
+  field(INPA,  "$(S1){$(D1)}Freq:I")
+  field(EGU,   "ms")
+  field(FLNK,  "$(S1){$(D1)}Time:ScopeRange")
+}
+
+record(calc,   "$(S1){$(D1)}Time:ScopeRange") {
+  field(CALC,  "A>0?(B*(2^(A+1)+1)):B")
+  field(INPA,  "$(S1){$(D1)}Cnt:Zoom")
+  field(INPB,  "$(S1){$(D1)}Time:Sample")
+  field(EGU,   "ms")
+  field(FLNK,  "$(S1){$(D1)}Time:Range-FOut")
+}
+
+record(fanout, "$(S1){$(D1)}Time:Range-FOut") {
+  field(LNK1,  "$(S1){$(D1)}Time:Rescale_")
+  field(LNK2,  "$(S1){$(D1)-$(TBL1)}Time:Range")
+}
+
+record(calc,   "$(S1){$(D1)-$(TBL1)}Time:Range") {
+  field(CALC,  "(2^(A+1))*B")
+  field(INPA,  "$(S1){$(D1)}Cnt:Zoom")
+  field(INPB,  "$(S1){$(D1)}Time:Sample")
+  field(EGU,   "ms")
+# field(FLNK,  "$(S1){$(D1)}DI:Ep03-RB")
+}
+
+record(longin, "$(S1){$(D1)}DI:Ep03-RB") {
+  field(DTYP,  "asynInt32")
+  field(DESC,  "WireIn Ep 03 RB:")
+  field(INP ,  "@asyn($(PORT),0)WinRB EP03")
+  field(SCAN,  "I/O Intr")
+  field(FLNK,  "$(S1){$(D1)}DI:Chan4-RB")
+}
+
+record(calcout, "$(S1){$(D1)}DI:Chan4-RB") {
+  field(DESC,   "Scope Chan 4 RB: ")
+  field(CALC,   "(A & B)>>4")
+  field(INPA,   "$(S1){$(D1)}DI:Ep03-RB")
+# field(INPB,   "0x00000070")
+  field(INPB,   "112")
+  field(FLNK,   "$(S1){$(D1)}DI:B07Ep03-RB")
+}
+
+record(calcout, "$(S1){$(D1)}DI:B07Ep03-RB") {
+  field(DESC,   "Ref Pr enable:")
+  field(CALC,   "(A & B)?1:0")
+  field(INPA,   "$(S1){$(D1)}DI:Ep03-RB")
+# field(INPB,   "0x00000080")
+  field(INPB,   "128")
+  field(FLNK,   "$(S1){$(D1)}DI:B08Ep03-RB")
+}
+
+record(calcout, "$(S1){$(D1)}DI:B08Ep03-RB") {
+  field(DESC,   "Vacuum conditioning:")
+  field(CALC,   "(A & B)?1:0")
+  field(INPA,   "$(S1){$(D1)}DI:Ep03-RB")
+# field(INPB,   "0x00000100")
+  field(INPB,   "256")
+  field(FLNK,   "$(S1){$(D1)}DI:B09Ep03-RB")
+}
+
+record(calcout, "$(S1){$(D1)}DI:B09Ep03-RB") {
+  field(DESC,   "FF duty cycle:")
+  field(CALC,   "(A & B)?1:0")
+  field(INPA,   "$(S1){$(D1)}DI:Ep03-RB")
+# field(INPB,   "0x00000200")
+  field(INPB,   "512")
+  field(FLNK,   "$(S1){$(D1)}DI:B13Ep03-RB")
+}
+
+record(calcout, "$(S1){$(D1)}DI:B13Ep03-RB") {
+  field(DESC,   "FF enable:")
+  field(CALC,   "(A & B)?1:0")
+  field(INPA,   "$(S1){$(D1)}DI:Ep03-RB")
+# field(INPB,   "0x00002000")
+  field(INPB,   "8192")
+  field(FLNK,   "$(S1){$(D1)}DI:B14Ep03-RB")
+}
+
+record(calcout, "$(S1){$(D1)}DI:B14Ep03-RB") {
+  field(DESC,   "Limiter enable:")
+  field(CALC,   "(A & B)?1:0")
+  field(INPA,   "$(S1){$(D1)}DI:Ep03-RB")
+# field(INPB,   "0x00004000")
+  field(INPB,   "16384")
+  field(FLNK,   "$(S1){$(D1)}DI:B15Ep03-RB")
+}
+
+record(calcout, "$(S1){$(D1)}DI:B15Ep03-RB") {
+  field(DESC,   "FB enable (0=Open, 1=Closed Loop):")
+  field(CALC,   "(A & B)?1:0")
+  field(INPA,   "$(S1){$(D1)}DI:Ep03-RB")
+# field(INPB,   "0x00008000")
+  field(INPB,   "32768")
+  field(OUT,    "$(S1){$(D1)}Sts:FB-RB PP")
+}
+
+record(bo,      "$(S1){$(D1)}Sts:FB-RB") {
+  field(DESC,   "FB loop:")
+  field(ZNAM,   "Open")
+  field(ONAM,   "Closed")
+# field(FLNK,   "$(S1){$(D1)}DI:Ep04-RB")
+}
+
+record(longin,  "$(S1){$(D1)}DI:Ep04-RB") {
+  field(DTYP,   "asynInt32")
+  field(DESC,   "WireIn Ep 04 RB, Tuner Phs Offset:")
+  field(INP ,   "@asyn($(PORT),0)WinRB EP04")
+  field(SCAN,   "I/O Intr")
+  field(FLNK,   "$(S1){$(D1)-$(SD1)}Phs:Offset-RB")
+}
+
+record(calc,	"$(S1){$(D1)-$(SD1)}Phs:Offset-RB") {
+  field(CALC,   "A*360/B")
+  field(INPA,   "$(S1){$(D1)}DI:Ep04-RB")
+  field(INPB,   "65535")
+  field(DISP,   "1")
+# field(FLNK,   "$(S1){$(D1)}DI:Ep05-RB")
+}
+
+record(longin,  "$(S1){$(D1)}DI:Ep05-RB") {
+  field(DTYP,   "asynInt32")
+  field(DESC,   "WireIn Ep 05 RB, Ki:")
+  field(INP ,   "@asyn($(PORT),0)WinRB EP05")
+  field(SCAN,   "I/O Intr")
+  field(FLNK,   "$(S1){$(D1)}DI:Ep06-RB")
+}
+
+#------------------------------------------------
+#................................................
+
+record(longin,  "$(S1){$(D1)}DI:Ep06-RB") {
+  field(DTYP,   "asynInt32")
+  field(DESC,   "WireIn Ep 06 RB, rot I:")
+  field(INP ,   "@asyn($(PORT),0)WinRB EP06")
+  field(SCAN,   "I/O Intr")
+  field(FLNK,   "$(S1){$(D1)}Val:RotI-RB")
+}
+
+# Convert to SHORT
+
+record(calcout, "$(S1){$(D1)}Val:RotI-RB") {
+  field(CALC,   "(A>32767)?(A-65535-1):A")
+  field(INPA,   "$(S1){$(D1)}DI:Ep06-RB")
+  field(FLNK,   "$(S1){$(D1)}Val:RotI-Buf")
+}
+
+record(waveform,"$(S1){$(D1)}Val:RotI-Buf") {
+  field(DESC,   "rot I RB")
+  field(FTVL,   "DOUBLE")
+  field(INP,    "$(S1){$(D1)}Val:RotI-RB")
+  field(NELM,   "1")
+# field(FLNK,   "$(S1){$(D1)}DI:Ep07-RB")
+}
+
+#................................................
+
+record(longin,   "$(S1){$(D1)}DI:Ep07-RB") {
+  field(DTYP,    "asynInt32")
+  field(DESC,    "WireIn Ep 07 RB, rot Q:")
+  field(INP ,    "@asyn($(PORT),0)WinRB EP07")
+  field(SCAN,    "I/O Intr")
+  field(FLNK,    "$(S1){$(D1)}Val:RotQ-RB")
+}
+
+# Convert to SHORT
+
+record(calcout,  "$(S1){$(D1)}Val:RotQ-RB") {
+  field(CALC,    "(A>32767)?(A-65535-1):A")
+  field(INPA,    "$(S1){$(D1)}DI:Ep07-RB")
+  field(FLNK,    "$(S1){$(D1)}Val:RotQ-Buf")
+}
+
+record(waveform, "$(S1){$(D1)}Val:RotQ-Buf") {
+  field(DESC,    "rot Q RB")
+  field(FTVL,    "DOUBLE")
+  field(INP,     "$(S1){$(D1)}Val:RotQ-RB")
+  field(NELM,    "1")
+  field(FLNK,    "$(S1){$(D1)}Val:RotRB-Calc")
+}
+
+record(aSub,     "$(S1){$(D1)}Val:RotRB-Calc") {
+  field(SNAM,    "IQ2AP")
+  field(FTA ,    "DOUBLE")
+  field(FTB ,    "DOUBLE")
+  field(FTVA ,   "DOUBLE")
+  field(FTVB ,   "DOUBLE")
+  field(NOA ,    "1")
+  field(NOB ,    "1")
+  field(NOVA,    "1")
+  field(NOVB,    "1")
+  field(INPA,    "$(S1){$(D1)}Val:RotI-Buf MSS")
+  field(INPB,    "$(S1){$(D1)}Val:RotQ-Buf MSS")
+  field(OUTA,    "$(S1){$(D1)}E:AmplRot-RB")
+  field(OUTB,    "$(S1){$(D1)}Phs:Loop2-RB")
+  field(FLNK,    "$(S1){$(D1)}Phs:Loop2-RB")
+}
+
+record(ai,       "$(S1){$(D1)}E:AmplRot-RB") {
+}
+
+record(ai,       "$(S1){$(D1)}Phs:Loop2-RB") {
+  field(FLNK,    "$(S1){$(D1)}Phs:Loop1RB-Calc")
+}
+
+record(calcout,  "$(S1){$(D1)}Phs:Loop1RB-Calc") {
+#
+# Wrap into +-180 deg
+#
+  field(CALC,    "(A<B)?(A+D):((A>C)?(A-D):A)")
+  field(INPA,    "$(S1){$(D1)}Phs:Loop2-RB")
+  field(INPB,    "-180.0")
+  field(INPC,    "+180.0")
+  field(INPD,    "+360.0")
+  field(OUT,     "$(S1){$(D1)}Phs:Loop-RB PP")
+}
+
+record(ai,       "$(S1){$(D1)}Phs:Loop-RB") {
+  field(DESC,    "Loop phase RB:")
+  field(EGU,     "deg")
+  field(PREC,    "1")
+  field(FLNK,    "$(S1){$(D1)}DI:Ep08-RB")
+}
+
+#................................................
+#------------------------------------------------
+
+record(longin,  "$(S1){$(D1)}DI:Ep08-RB") {
+  field(DTYP,   "asynInt32")
+  field(DESC,   "WireIn Ep 08 RB:")
+  field(INP ,   "@asyn($(PORT),0)WinRB EP08")
+  field(SCAN,   "I/O Intr")
+# field(FLNK,   "$(S1){$(D1)}DI:Ep09-RB")
+}
+
+record(longin,  "$(S1){$(D1)}DI:Ep09-RB") {
+  field(DTYP,   "asynInt32")
+  field(DESC,   "WireIn Ep 09 RB:")
+  field(INP ,   "@asyn($(PORT),0)WinRB EP09")
+  field(SCAN,   "I/O Intr")
+# field(FLNK,   "$(S1){$(D1)}DI:Ep10-RB")
+}
+
+record(longin,  "$(S1){$(D1)}DI:Ep10-RB") {
+  field(DTYP,   "asynInt32")
+  field(DESC,   "WireIn Ep 10 RB, DS1825COMM:")
+  field(INP ,   "@asyn($(PORT),0)WinRB EP10")
+  field(SCAN,   "I/O Intr")
+# field(FLNK,   "$(S1){$(D1)}DI:Ep11-RB")
+}
+
+record(longin,  "$(S1){$(D1)}DI:Ep11-RB") {
+  field(DTYP,   "asynInt32")
+  field(DESC,   "WireIn Ep 11 RB, FB Interval:")
+  field(INP,    "@asyn($(PORT),0)WinRB EP11")
+  field(SCAN,   "I/O Intr")
+  field(FLNK,   "$(S1){$(D1)-$(TBL2)}Time:Unit")
+}
+
+record(calc,  "$(S1){$(D1)-$(TBL2)}Time:Unit") {
+  field(CALC, "A*B*C")
+#Time:Clk 0.025E-06 [s]
+  field(INPA, "$(S1){$(D1)}Time:Clk")
+  field(INPB, "16.0")
+  field(INPC, "$(S1){$(D1)}DI:Ep11-RB")
+  field(EGU,  "s")
+  field(FLNK, "$(S1){$(D1)-$(TBL2)}Time:Range")
+}
+
+record(calc,  "$(S1){$(D1)-$(TBL2)}Time:Range") {
+  field(CALC, "A*B*C")
+#FB:HUnit [s]
+  field(INPA, "$(S1){$(D1)-$(TBL2)}Time:Unit")
+  field(INPB, "512")
+#INPC converts to ms
+  field(INPC, "1000.0")
+  field(EGU,  "ms")
+}
+
+record(longin, "$(S1){$(D1)}DI:Ep12-RB") {
+  field(DTYP,  "asynInt32")
+  field(DESC,  "WireIn Ep 12 RB:")
+  field(INP ,  "@asyn($(PORT),0)WinRB EP12")
+  field(SCAN,  "I/O Intr")
+}
+
+record(longin, "$(S1){$(D1)}DI:Ep13-RB") {
+  field(DTYP,  "asynInt32")
+  field(DESC,  "WireIn Ep 13 RB:")
+  field(INP ,  "@asyn($(PORT),0)WinRB EP13")
+  field(SCAN,  "I/O Intr")
+}
+
+record(longin, "$(S1){$(D1)}DI:Ep14-RB") {
+  field(DTYP,  "asynInt32")
+  field(DESC,  "WireIn Ep 14 RB:")
+  field(INP ,  "@asyn($(PORT),0)WinRB EP14")
+  field(SCAN,  "I/O Intr")
+}
+
+record(longin, "$(S1){$(D1)}DI:Ep15-RB") {
+  field(DTYP,  "asynInt32")
+  field(DESC,  "WireIn Ep 15 RB:")
+  field(INP ,  "@asyn($(PORT),0)WinRB EP15")
+  field(SCAN,  "I/O Intr")
+}
+
+record(longin, "$(S1){$(D1)}DI:Ep16-RB") {
+  field(DTYP,  "asynInt32")
+  field(DESC,  "WireIn Ep 16 RB, T0 Scope:")
+  field(INP ,  "@asyn($(PORT),0)WinRB EP16")
+  field(SCAN,  "I/O Intr")
+}
+
+record(longin, "$(S1){$(D1)}DI:Ep17-RB") {
+  field(DTYP, "asynInt32")
+  field(DESC, "WireIn Ep 17 RB, naFreq:")
+  field(INP , "@asyn($(PORT),0)WinRB EP17")
+  field(SCAN, "I/O Intr")
+}
+
+record(longin, "$(S1){$(D1)}DI:Ep18-RB") {
+  field(DTYP, "asynInt32")
+  field(DESC, "WireIn Ep 18 RB, naPII:")
+  field(INP , "@asyn($(PORT),0)WinRB EP18")
+  field(SCAN, "I/O Intr")
+}
+
+record(longin, "$(S1){$(D1)}DI:Ep19-RB") {
+  field(DTYP, "asynInt32")
+  field(DESC, "WireIn Ep 19 RB, naPIC0:")
+  field(INP , "@asyn($(PORT),0)WinRB EP19")
+  field(SCAN, "I/O Intr")
+}
+
+record(longin, "$(S1){$(D1)}DI:Ep20-RB") {
+  field(DTYP, "asynInt32")
+  field(DESC, "WireIn Ep 20 RB, naPIC1:")
+  field(INP , "@asyn($(PORT),0)WinRB EP20")
+  field(SCAN, "I/O Intr")
+}
+
+record(longin, "$(S1){$(D1)}DI:Ep24-RB") {
+  field(DTYP, "asynInt32")
+  field(DESC, "WireIn Ep 24 RB, pgKi:")
+  field(INP , "@asyn($(PORT),0)WinRB EP24")
+  field(SCAN, "I/O Intr")
+}
+
+record(longin, "$(S1){$(D1)}DI:Ep25-RB") {
+  field(DTYP, "asynInt32")
+  field(DESC, "WireIn Ep 25 RB, pgRotI:")
+  field(INP , "@asyn($(PORT),0)WinRB EP25")
+  field(SCAN, "I/O Intr")
+}
+
+record(longin, "$(S1){$(D1)}DI:Ep27-RB") {
+  field(DTYP, "asynInt32")
+  field(DESC, "WireIn Ep 27 RB, pgTime:")
+  field(INP , "@asyn($(PORT),0)WinRB EP27")
+  field(SCAN, "I/O Intr")
+}
+
+record(longin, "$(S1){$(D1)}DI:Ep28-RB") {
+  field(DTYP, "asynInt32")
+  field(DESC, "WireIn Ep 28 RB, pgRotQ:")
+  field(INP , "@asyn($(PORT),0)WinRB EP28")
+  field(SCAN, "I/O Intr")
+}
+
+record(longin, "$(S1){$(D1)}DI:Ep32-RB") {
+  field(DTYP, "asynInt32")
+  field(DESC, "WireIn Ep 32 RB:")
+  field(INP , "@asyn($(PORT),0)WinRB EP32")
+  field(SCAN, "I/O Intr")
+}
+
+record(longin, "$(S1){$(D1)}DI:Ep33-RB") {
+  field(DTYP, "asynInt32")
+  field(DESC, "WireIn Ep 33 RB:")
+  field(INP , "@asyn($(PORT),0)WinRB EP33")
+  field(SCAN, "I/O Intr")
+}
+
+record(longin, "$(S1){$(D1)}DI:Ep34-RB") {
+  field(DTYP, "asynInt32")
+  field(DESC, "WireIn Ep 34 RB:")
+  field(INP , "@asyn($(PORT),0)WinRB EP34")
+  field(SCAN, "I/O Intr")
+}
+
+record(longin, "$(S1){$(D1)}DI:Ep35-RB") {
+  field(DTYP, "asynInt32")
+  field(DESC, "WireIn Ep 35 RB:")
+  field(INP , "@asyn($(PORT),0)WinRB EP35")
+  field(SCAN, "I/O Intr")
+}
+
+record(longin, "$(S1){$(D1)}DI:Ep36-RB") {
+  field(DTYP, "asynInt32")
+  field(DESC, "WireIn Ep 36 RB:")
+  field(INP , "@asyn($(PORT),0)WinRB EP36")
+  field(SCAN, "I/O Intr")
+  field(FLNK, "$(S1){$(D1)}ID:Brd1-Calc")
+}
+
+record(scalcout, "$(S1){$(D1)}ID:Brd1-Calc") {
+  field(CALC,    "$P('%x',A/256)+$P('%04x',B/256)")
+  field(INPA,    "$(S1){$(D1)}DI:Ep32-RB ")
+  field(INPB,    "$(S1){$(D1)}DI:Ep34-RB ")
+  field(OUT,     "$(S1){$(D1)}ID:Brd1-Str PP")
+}
+
+record(stringout,"$(S1){$(D1)}ID:Brd1-Str") {
+  field(FLNK,    "$(S1){$(D1)}ID:Brd2-Calc")
+}
+
+record(calc,     "$(S1){$(D1)}ID:Brd2-Calc") {
+  field(CALC,    "A & B")
+  field(INPA,    "$(S1){$(D1)}DI:Ep32-RB")
+# field(INPB,    "0x000f")
+  field(INPB,    "15")
+  field(FLNK,    "$(S1){$(D1)}ID:Brd3-Calc")
+}
+
+record(scalcout, "$(S1){$(D1)}ID:Brd3-Calc") {
+  field(CALC,    "AA + $P('%04x',B)+$P('%04x',C)")
+  field(INAA ,   "$(S1){$(D1)}ID:Brd1-Str")
+  field(INPB,    "$(S1){$(D1)}ID:Brd2-Calc")
+  field(INPC,    "$(S1){$(D1)}DI:Ep33-RB")
+  field(OUT,     "$(S1){$(D1)}ID:Serial-I PP")
+}
+
+record(stringout,"$(S1){$(D1)}ID:Serial-I") {
+}
+
+
+
