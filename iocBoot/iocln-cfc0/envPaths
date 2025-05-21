@@ -1,5 +1,5 @@
 epicsEnvSet("IOC","iocln-cfc0")
-epicsEnvSet("TOP","/epics/R7_0_9/base-7.0.9/LN-CFC0")
+epicsEnvSet("TOP","/epics/iocs/LN-CFC0")
 epicsEnvSet("MODULES","/epics/R7_0_9/base-7.0.9/../modules/soft")
 epicsEnvSet("SNCSEQ","/epics/R7_0_9/base-7.0.9/../modules/soft/seq-2.2.9")
 epicsEnvSet("CALC","/epics/R7_0_9/base-7.0.9/../modules/soft/calc-R3-7-4")

@@ -320,12 +320,3 @@ record(ai,       "$(S1){$(D1)-$(SD1)}Phs:Std-I") {
   field(PREC,    "4")
   field(EGU ,    "deg")
 }
-
-# MAR 30, 2016 - Added editable channel name for OPI
-
-record(stringout,"$(S1){$(D1)-$(SD1)}Chan:Name") {
-  field(DESC,    "Channel $(ADDR):")
-  field(PINI,    "YES")
-  info(autosaveFields_pass1, "VAL")
-}
-

@@ -1,0 +1,2 @@
+alias("LN-RF{CFC:0-FF}E:SP","LN-RF:ES{MBM}FF:AmpCtrl-SP")
+alias("LN-RF{CFC:0-FF}Phs:SP","LN-RF:ES{MBM}FF:PhaCtrl-SP")

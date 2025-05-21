@@ -1,4 +1,20 @@
-# autosave R5.3	Automatically generated - DO NOT MODIFY - 250410-134731
+# autosave R5.3	Automatically generated - DO NOT MODIFY - 250521-155209
+LN-RF{CFC:0-Cav}E:Scale-SP.VAL 2369000
+LN-RF{CFC:0}Enbl:Limiter.VAL 0
+LN-RF{CFC:0}Enbl:ADC.VAL 1
+LN-RF{CFC:0}Enbl:ADC.SCAN 0
+LN-RF{CFC:0-PG}Enbl:Circ-SP.VAL 0
+LN-RF{CFC:0-PG}Enbl:Rept-SP.VAL 0
+LN-RF{CFC:0}Cnt:Zoom.VAL 5
+LN-RF{CFC:0}Cnt:FBRampInterval.VAL 50
+LN-RF{CFC:0-NA}Freq:SP.VAL 0
+LN-RF{CFC:0-NA}Phs:II-SP.VAL 0
+LN-RF{CFC:0-NA}Cnt:Phs0-SP.VAL 0
+LN-RF{CFC:0-NA}Cnt:Phs1-SP.VAL 0
+LN-RF{CFC:0-NA}Val:Intens-SP.VAL 0
+LN-RF{CFC:0-PG}Time:SP.VAL 0
+LN-RF{CFC:0}Sw:Chan4-SP.VAL 7
+LN-RF{CFC:0-FF}Cnt:Eq-Sel.VAL 0
 LN-RF{CFC:0}Note:Study-SP.VAL 0
 LN-RF{CFC:0}Note:Op-SP.VAL 0
 LN-RF{CFC:0-FF}E:Eq1.VAL 67
@@ -19,20 +35,4 @@ LN-RF{CFC:0-FF}Phs:Eq7.VAL 0
 LN-RF{CFC:0-FF}Phs:File1.VAL 0
 LN-RF{CFC:0-FF}E:Eq-SP.VAL @array@ { "67" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" }
 LN-RF{CFC:0-FF}Phs:Eq-SP.VAL @array@ { "67" "43" "76" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" }
-LN-RF{CFC:0}Cnt:Zoom.VAL 5
-LN-RF{CFC:0}Cnt:FBRampInterval.VAL 50
-LN-RF{CFC:0-NA}Freq:SP.VAL 0
-LN-RF{CFC:0-NA}Phs:II-SP.VAL 0
-LN-RF{CFC:0-NA}Cnt:Phs0-SP.VAL 0
-LN-RF{CFC:0-NA}Cnt:Phs1-SP.VAL 0
-LN-RF{CFC:0-NA}Val:Intens-SP.VAL 0
-LN-RF{CFC:0-PG}Time:SP.VAL 0
-LN-RF{CFC:0-Cav}E:Scale-SP.VAL 2369000
-LN-RF{CFC:0}Sw:Chan4-SP.VAL 7
-LN-RF{CFC:0-FF}Cnt:Eq-Sel.VAL 0
-LN-RF{CFC:0}Enbl:Limiter.VAL 0
-LN-RF{CFC:0}Enbl:ADC.VAL 1
-LN-RF{CFC:0}Enbl:ADC.SCAN 0
-LN-RF{CFC:0-PG}Enbl:Circ-SP.VAL 0
-LN-RF{CFC:0-PG}Enbl:Rept-SP.VAL 0
 <END>
