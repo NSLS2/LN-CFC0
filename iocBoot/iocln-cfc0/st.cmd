@@ -94,5 +94,4 @@ create_monitor_set("cfc_values.req", 5 , "")
 create_monitor_set("cfc_waveforms.req", 5 , "")
 
 caPutLogInit("10.0.152.133:7004", 1)
-
-
+dbpf("RF-CT{$(IOC)}:READACF.SCAN", "10 second")

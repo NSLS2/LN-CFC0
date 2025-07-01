@@ -1,10 +1,10 @@
 NAME=LN-CFC0
 
-PORT=4053
+PORT=4086
 
 USER=softioc
 
-HOST=rfctrl01-vm
+HOST=linacioc04
 
 CHDIR="$CHDIR/iocBoot/iocln-cfc0"
 EXEC="$CHDIR/st.cmd"
